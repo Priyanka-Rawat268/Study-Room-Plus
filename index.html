@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudySync</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="auth-container">
+        
+        <!-- LOGO -->
+        <h1 class="logo">📚 StudySync</h1>
+        <p class="tagline">Learn together, grow together</p>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab active" onclick="showLogin()">Login</button>
+            <button class="tab" onclick="showSignup()">Sign Up</button>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <div class="form" id="loginForm">
+            <input type="email" placeholder="Email" id="loginEmail">
+            <input type="password" placeholder="Password" id="loginPassword">
+            <button class="btn" onclick="login()">Login</button>
+        </div>
+
+        <!-- SIGNUP FORM -->
+        <div class="form" id="signupForm" style="display:none;">
+            <input type="text" placeholder="Full Name" id="signupName">
+            <input type="email" placeholder="Email" id="signupEmail">
+            <input type="password" placeholder="Password" id="signupPassword">
+            <button class="btn" onclick="signup()">Sign Up</button>
+        </div>
+
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
