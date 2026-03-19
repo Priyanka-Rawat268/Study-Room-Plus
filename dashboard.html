@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudySync - Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <h1 class="logo">📚 StudySync</h1>
+        <div class="nav-right">
+            <span id="welcomeText">Welcome!</span>
+            <button class="btn-small" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+
+        <!-- TOP ROW -->
+        <div class="top-row">
+            <h2>My Classrooms</h2>
+            <div class="top-buttons">
+                <button class="btn" onclick="showCreateModal()">+ Create Classroom</button>
+                <button class="btn btn-outline" onclick="showJoinModal()">Join Classroom</button>
+            </div>
+        </div>
+
+        <!-- CLASSROOMS GRID -->
+        <div class="classroom-grid" id="classroomGrid">
+            <!-- classrooms will appear here -->
+            <p id="emptyMsg">No classrooms yet. Create or join one!</p>
+        </div>
+
+    </div>
+
+    <!-- CREATE CLASSROOM MODAL -->
+    <div class="modal" id="createModal" style="display:none;">
+        <div class="modal-box">
+            <h3>Create Classroom</h3>
+            <input type="text" placeholder="Subject Name" id="subjectName">
+            <input type="text" placeholder="Classroom Name" id="classroomName">
+            <div class="modal-buttons">
+                <button class="btn" onclick="createClassroom()">Create</button>
+                <button class="btn btn-outline" onclick="hideModals()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JOIN CLASSROOM MODAL -->
+    <div class="modal" id="joinModal" style="display:none;">
+        <div class="modal-box">
+            <h3>Join Classroom</h3>
+            <input type="text" placeholder="Enter Room Code" id="roomCode">
+            <div class="modal-buttons">
+                <button class="btn" onclick="joinClassroom()">Join</button>
+                <button class="btn btn-outline" onclick="hideModals()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

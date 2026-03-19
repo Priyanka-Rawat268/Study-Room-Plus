@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudySync - Classroom</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <h1 class="logo">📚 StudySync</h1>
+        <div class="nav-right">
+            <button class="btn-small" onclick="goBack()">← Back</button>
+            <button class="btn-small" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- CLASSROOM HEADER -->
+    <div class="classroom-header">
+        <h2 id="classroomTitle">Classroom</h2>
+        <p id="classroomSubject">Subject</p>
+        <span class="room-code" id="classroomCode">Code: ------</span>
+    </div>
+
+    <!-- TABS -->
+    <div class="container">
+        <div class="classroom-tabs">
+            <button class="classroom-tab active" onclick="showTab('notes')">📝 Notes</button>
+            <button class="classroom-tab" onclick="showTab('quiz')">🧠 Quiz</button>
+            <button class="classroom-tab" onclick="showTab('meeting')">🔗 Meeting</button>
+        </div>
+
+        <!-- NOTES TAB -->
+        <div class="tab-content" id="notesTab">
+            <div class="tab-top">
+                <h3>Shared Notes</h3>
+                <button class="btn" onclick="showUploadModal()">+ Upload Note</button>
+            </div>
+            <div class="notes-grid" id="notesGrid">
+                <p id="emptyNotes">No notes yet. Upload one!</p>
+            </div>
+        </div>
+
+        <!-- QUIZ TAB -->
+        <div class="tab-content" id="quizTab" style="display:none;">
+            <div class="tab-top">
+                <h3>Quizzes</h3>
+                <button class="btn" onclick="showCreateQuizModal()">+ Create Quiz</button>
+            </div>
+            <div class="quiz-grid" id="quizGrid">
+                <p id="emptyQuiz">No quizzes yet. Create one!</p>
+            </div>
+        </div>
+
+        <!-- MEETING TAB -->
+        <div class="tab-content" id="meetingTab" style="display:none;">
+            <div class="meeting-box">
+                <h3>Meeting Link</h3>
+                <p>Share a Google Meet link with your classmates</p>
+                <div class="meeting-input-row">
+                    <input type="text" placeholder="Paste Google Meet link here" id="meetLink">
+                    <button class="btn" onclick="saveMeetLink()">Save</button>
+                </div>
+                <div id="meetLinkDisplay" style="display:none;">
+                    <p>Current Link:</p>
+                    <a id="meetLinkAnchor" href="#" target="_blank">Join Meeting</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPLOAD NOTE MODAL -->
+    <div class="modal" id="uploadModal" style="display:none;">
+        <div class="modal-box">
+            <h3>Upload Note</h3>
+            <input type="text" placeholder="Note Title" id="noteTitle">
+            <input type="text" placeholder="Description (optional)" id="noteDesc">
+            <input type="file" id="noteFile" accept=".pdf,.doc,.docx,.txt,.png,.jpg">
+            <div class="modal-buttons">
+                <button class="btn" onclick="uploadNote()">Upload</button>
+                <button class="btn btn-outline" onclick="hideAllModals()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CREATE QUIZ MODAL -->
+    <div class="modal" id="createQuizModal" style="display:none;">
+        <div class="modal-box">
+            <h3>Create Quiz</h3>
+            <input type="text" placeholder="Quiz Title" id="quizTitle">
+            <input type="text" placeholder="Question" id="quizQuestion">
+            <input type="text" placeholder="Option A" id="optionA">
+            <input type="text" placeholder="Option B" id="optionB">
+            <input type="text" placeholder="Option C" id="optionC">
+            <input type="text" placeholder="Option D" id="optionD">
+            <select id="correctAnswer">
+                <option value="">Select Correct Answer</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+            </select>
+            <div class="modal-buttons">
+                <button class="btn" onclick="createQuiz()">Create</button>
+                <button class="btn btn-outline" onclick="hideAllModals()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
