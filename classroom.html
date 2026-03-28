@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudySync - Classroom</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -57,15 +57,7 @@
         <!-- MEETING TAB -->
         <div class="tab-content" id="meetingTab" style="display:none;">
             <div class="meeting-box">
-                <h3>Meeting Link</h3>
-                <p>Share a Google Meet link with your classmates</p>
-                <div class="meeting-input-row">
-                    <input type="text" placeholder="Paste Google Meet link here" id="meetLink">
-                    <button class="btn" onclick="saveMeetLink()">Save</button>
-                </div>
-                <div id="meetLinkDisplay" style="display:none;">
-                    <p>Current Link:</p>
-                    <a id="meetLinkAnchor" href="#" target="_blank">Join Meeting</a>
+                <div id="create-button" style="width: 90px;height: 50px;background-color:black;position: relative;bottom: 10px;">Create</div>
                 </div>
             </div>
         </div>
@@ -109,6 +101,6 @@
         </div>
     </div>
 
-    <script src="js/main.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
