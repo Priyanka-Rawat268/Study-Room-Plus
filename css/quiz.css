@@ -1,0 +1,157 @@
+/* =====================
+   QUIZ
+===================== */
+.quiz-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+#emptyQuiz {
+    color: #4a4a6a;
+    font-size: 14px;
+}
+
+.quiz-card {
+    background: #1a1a2e;
+    border-radius: 16px;
+    padding: 22px;
+    border: 1px solid #2e2e4a;
+    position: relative;
+    overflow: hidden;
+}
+
+.quiz-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #d97706, #fbbf24);
+}
+
+.quiz-card h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #e2e2f0;
+    margin-bottom: 10px;
+}
+
+.quiz-card p {
+    font-size: 14px;
+    color: #a0a0c0;
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.quiz-option {
+    padding: 10px 14px;
+    background: #0f0f13;
+    border: 1px solid #2e2e4a;
+    border-radius: 10px;
+    font-size: 13px;
+    color: #e2e2f0;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+}
+
+.quiz-option:hover:not(:disabled) {
+    background: rgba(124, 58, 237, 0.1);
+    border-color: #7c3aed;
+    color: #a78bfa;
+}
+
+.quiz-option.correct {
+    background: rgba(5, 150, 105, 0.15);
+    border-color: #059669;
+    color: #34d399;
+}
+
+.quiz-option.wrong {
+    background: rgba(220, 38, 38, 0.15);
+    border-color: #dc2626;
+    color: #f87171;
+}
+
+/* =====================
+   MEETING
+===================== */
+.meeting-box {
+    background: #1a1a2e;
+    border-radius: 16px;
+    padding: 32px;
+    border: 1px solid #2e2e4a;
+    max-width: 600px;
+}
+
+.meeting-box h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #e2e2f0;
+    margin-bottom: 8px;
+}
+
+.meeting-box > p {
+    font-size: 14px;
+    color: #6b6b9a;
+    margin-bottom: 24px;
+}
+
+.meeting-input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.meeting-input-row input {
+    flex: 1;
+    padding: 12px 16px;
+    background: #0f0f13;
+    border: 1px solid #2e2e4a;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #e2e2f0;
+    outline: none;
+}
+
+.meeting-input-row input:focus {
+    border-color: #7c3aed;
+}
+
+.meeting-input-row input::placeholder {
+    color: #4a4a6a;
+}
+
+#meetLinkDisplay {
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(124, 58, 237, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(124, 58, 237, 0.3);
+}
+
+#meetLinkDisplay p {
+    font-size: 12px;
+    color: #6b6b9a;
+    margin-bottom: 6px;
+}
+
+#meetLinkAnchor {
+    font-size: 15px;
+    color: #a78bfa;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+#meetLinkAnchor:hover {
+    text-decoration: underline;
+}
