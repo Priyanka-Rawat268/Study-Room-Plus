@@ -1,180 +1,219 @@
 import { supabase } from './supabase.js'
+import { isDemoUser } from './auth.js'
+
+// ───────────────────────────────────────────────
+// CONFIG — MC-QZ backend URL
+// ───────────────────────────────────────────────
+const MC_QZ_URL = 'http://127.0.0.1:5000'
 
 // =====================
 // ON PAGE LOAD
 // =====================
-window.addEventListener('load', function () {
-    renderQuizzes()
-    loadMeetLink()
-})
-
-// =====================
-// SHOW MODAL
-// =====================
-function showCreateQuizModal() {
-    document.getElementById('createQuizModal').style.display = 'flex'
-}
-
-function hideCreateQuizModal() {
-    document.getElementById('createQuizModal').style.display = 'none'
+window.onload = function () {
+    checkBackendStatus()
+    initAIGenerator()
+    loadAIQuizHistory()
 }
 
 // =====================
-// CREATE QUIZ
+// BACKEND STATUS CHECK
 // =====================
-async function createQuiz() {
-    let title = document.getElementById('quizTitle').value
-    let question = document.getElementById('quizQuestion').value
-    let optionA = document.getElementById('optionA').value
-    let optionB = document.getElementById('optionB').value
-    let optionC = document.getElementById('optionC').value
-    let optionD = document.getElementById('optionD').value
-    let correct = document.getElementById('correctAnswer').value
+async function checkBackendStatus() {
+    const dot   = document.getElementById('statusDot')
+    const text  = document.getElementById('statusText')
+    const card  = document.getElementById('aiGenCard')
 
-    if (!title || !question || !optionA || !optionB || !optionC || !optionD || !correct) {
-        alert('Please fill in all fields')
-        return
+    if (!dot || !text) return
+
+    try {
+        const res = await fetch(`${MC_QZ_URL}/api/quizzes`, { signal: AbortSignal.timeout(2000) })
+        if (res.ok) {
+            dot.className = 'status-dot online'
+            text.textContent = 'AI Backend: Online'
+            card.classList.remove('backend-offline')
+        } else {
+            throw new Error()
+        }
+    } catch (e) {
+        dot.className = 'status-dot offline'
+        text.textContent = 'AI Backend: Offline'
+        card.classList.add('backend-offline')
     }
-
-    let { data: { user } } = await supabase.auth.getUser()
-    let classroom = JSON.parse(localStorage.getItem('currentClassroom'))
-
-    let { error } = await supabase
-        .from('quizzes')
-        .insert([{
-            title: title,
-            question: question,
-            option_a: optionA,
-            option_b: optionB,
-            option_c: optionC,
-            option_d: optionD,
-            correct_answer: correct,
-            classroom_id: classroom.id,
-            created_by: user.id
-        }])
-
-    if (error) {
-        alert('Error creating quiz: ' + error.message)
-        return
-    }
-
-    hideCreateQuizModal()
-
-    document.getElementById('quizTitle').value = ''
-    document.getElementById('quizQuestion').value = ''
-    document.getElementById('optionA').value = ''
-    document.getElementById('optionB').value = ''
-    document.getElementById('optionC').value = ''
-    document.getElementById('optionD').value = ''
-    document.getElementById('correctAnswer').value = ''
-
-    renderQuizzes()
 }
 
 // =====================
-// RENDER QUIZZES
+// AI GENERATOR INIT
 // =====================
-async function renderQuizzes() {
-    let classroom = JSON.parse(localStorage.getItem('currentClassroom'))
-    let grid = document.getElementById('quizGrid')
-    let emptyMsg = document.getElementById('emptyQuiz')
+function initAIGenerator() {
+    const form        = document.getElementById('aiGenerateForm')
+    const slider      = document.getElementById('aiQuestionCount')
+    const qDisplay    = document.getElementById('aiQCountDisplay')
+    const timerInput  = document.getElementById('aiTimerMinutes')
+    const timerDisp   = document.getElementById('aiTimerDisplay')
+    const promptInput = document.getElementById('aiPromptInput')
 
-    let { data: quizzes, error } = await supabase
-        .from('quizzes')
-        .select('*')
-        .eq('classroom_id', classroom.id)
-        .order('created_at', { ascending: false })
+    if (!form) return
 
-    if (error) {
-        console.log('Error loading quizzes:', error.message)
-        return
-    }
+    // Slider updates
+    slider.addEventListener('input', (e) => {
+        qDisplay.textContent = e.target.value
+        // Auto-update timer recommendation (1.5 min per question)
+        timerInput.value = Math.round(e.target.value * 1.5)
+        timerDisp.textContent = timerInput.value
+    })
 
-    if (!quizzes || quizzes.length === 0) {
-        emptyMsg.style.display = 'block'
-        return
-    }
+    timerInput.addEventListener('input', (e) => {
+        timerDisp.textContent = e.target.value
+    })
 
-    emptyMsg.style.display = 'none'
-    grid.innerHTML = ''
+    const loadingMessages = [
+        'Connecting to Gemini AI…',
+        'Analyzing your topic…',
+        'Crafting exam-grade questions…',
+        'Calibrating difficulty…',
+        'Generating explanations…',
+        'Validating answer keys…',
+        'Almost there…',
+    ]
 
-    quizzes.forEach(function (quiz, index) {
-        let card = document.createElement('div')
-        card.className = 'quiz-card'
-        card.innerHTML = `
-            <h4>${quiz.title}</h4>
-            <p>${quiz.question}</p>
-            <div class="quiz-options">
-                <button class="quiz-option" onclick="attemptQuiz(${index}, 'A', '${quiz.correct_answer}', this)">A. ${quiz.option_a}</button>
-                <button class="quiz-option" onclick="attemptQuiz(${index}, 'B', '${quiz.correct_answer}', this)">B. ${quiz.option_b}</button>
-                <button class="quiz-option" onclick="attemptQuiz(${index}, 'C', '${quiz.correct_answer}', this)">C. ${quiz.option_c}</button>
-                <button class="quiz-option" onclick="attemptQuiz(${index}, 'D', '${quiz.correct_answer}', this)">D. ${quiz.option_d}</button>
-            </div>
-            <p id="quizResult${index}" style="font-size: 13px; font-weight: 500;"></p>
-        `
-        grid.appendChild(card)
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault()
+        const prompt = promptInput.value.trim()
+        const numQ   = parseInt(slider.value) || 20
+        const timer  = parseInt(timerInput.value) || Math.round(numQ * 1.5)
+
+        if (!prompt) {
+            alert('Please describe what you want to be quizzed on.')
+            promptInput.focus()
+            return
+        }
+
+        const btn     = document.getElementById('aiGenerateBtn')
+        const btnText = document.getElementById('aiGenerateBtnText')
+        const spinner = document.getElementById('aiSpinner')
+
+        btn.disabled          = true
+        spinner.style.display = 'inline-block'
+
+        let msgIdx = 0
+        const msgTimer = setInterval(() => {
+            btnText.textContent = loadingMessages[msgIdx % loadingMessages.length]
+            msgIdx++
+        }, 3000)
+
+        try {
+            const res = await fetch(`${MC_QZ_URL}/api/generate-topic`, {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt, num_questions: numQ, timer_minutes: timer }),
+            })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error || 'Generation failed')
+
+            clearInterval(msgTimer)
+            // Remember to restore Quiz tab when user comes back
+            sessionStorage.setItem('restoreTab', 'quiz')
+            const returnUrl = encodeURIComponent(window.location.href)
+            window.location.href = `${MC_QZ_URL}/quiz?id=${data.quiz_id}&return=${returnUrl}`
+
+        } catch (err) {
+            clearInterval(msgTimer)
+            alert('AI Quiz Error: ' + err.message + '\n\nMake sure the Flask backend is running:\n  cd backend && python app.py')
+        } finally {
+            btn.disabled          = false
+            btnText.textContent   = '✨ Generate Quiz'
+            spinner.style.display = 'none'
+        }
     })
 }
 
 // =====================
-// ATTEMPT QUIZ
+// AI QUIZ HISTORY
 // =====================
-function attemptQuiz(index, selected, correct, clickedBtn) {
-    let card = document.querySelectorAll('.quiz-card')[index]
-    let options = card.querySelectorAll('.quiz-option')
-    let resultEl = document.getElementById('quizResult' + index)
+async function loadAIQuizHistory() {
+    const listEl = document.getElementById('aiQuizHistory')
+    if (!listEl) return
 
-    // disable all options
-    options.forEach(function (btn) {
-        btn.disabled = true
-    })
+    try {
+        const res = await fetch(`${MC_QZ_URL}/api/quizzes`, { signal: AbortSignal.timeout(3000) })
+        const quizzes = await res.json()
 
-    let letters = ['A', 'B', 'C', 'D']
+        if (!Array.isArray(quizzes) || quizzes.length === 0) {
+            listEl.innerHTML = '<div class="ai-empty-state">No history yet. Start your first AI session!</div>'
+            return
+        }
 
-    if (selected === correct) {
-        clickedBtn.classList.add('correct')
-        resultEl.textContent = '✅ Correct!'
-        resultEl.style.color = '#34d399'
-    } else {
-        clickedBtn.classList.add('wrong')
-        options[letters.indexOf(correct)].classList.add('correct')
-        resultEl.textContent = '❌ Wrong! Correct answer is ' + correct
-        resultEl.style.color = '#f87171'
+        listEl.innerHTML = ''
+        quizzes.slice(0, 10).forEach(q => {
+            const item = document.createElement('div')
+            item.className = 'ai-quiz-item'
+            
+            // Format name: uppercase first letter
+            const displayTitle = q.name.charAt(0).toUpperCase() + q.name.slice(1)
+            
+            item.innerHTML = `
+                <div class="ai-quiz-item-info">
+                    <div class="ai-quiz-item-title">${displayTitle}</div>
+                    <div class="ai-quiz-item-meta">
+                        <span class="ai-badge badge-ai">🎯 AI</span>
+                        ${q.count} Qs · ${q.timer} min
+                    </div>
+                </div>
+                <div class="ai-quiz-item-actions">
+                    <button class="btn btn-primary ai-action-btn" onclick="aiRetake('${q.id}')">Start</button>
+                    ${q.score_pct !== null ? `<button class="btn btn-secondary ai-action-btn" onclick="aiViewResult('${q.id}')">Result (${q.score_pct}%)</button>` : ''}
+                </div>
+            `
+            listEl.appendChild(item)
+        })
+
+    } catch (e) {
+        listEl.innerHTML = '<div class="ai-empty-state">History unavailable while backend is offline.</div>'
     }
 }
 
-// =====================
-// MEETING
-// =====================
+window.aiRetake = function (id) {
+    sessionStorage.removeItem(`answers_${id}`)
+    sessionStorage.setItem('restoreTab', 'quiz')
+    const returnUrl = encodeURIComponent(window.location.href)
+    window.location.href = `${MC_QZ_URL}/quiz?id=${id}&return=${returnUrl}`
+}
+
+window.aiViewResult = function (id) {
+    sessionStorage.setItem('restoreTab', 'quiz')
+    const returnUrl = encodeURIComponent(window.location.href)
+    window.location.href = `${MC_QZ_URL}/result?id=${id}&return=${returnUrl}`
+}
+
+// ─── Meeting Link Logic ──────────────────────
+
 function loadMeetLink() {
     let classroom = JSON.parse(localStorage.getItem('currentClassroom'))
+    if (!classroom) return
+
     let savedLink = localStorage.getItem('meetLink_' + classroom.id)
 
     if (savedLink) {
-        document.getElementById('meetLinkDisplay').style.display = 'block'
-        document.getElementById('meetLinkAnchor').href = savedLink
-        document.getElementById('meetLinkAnchor').textContent = savedLink
+        document.getElementById('meetLinkDisplay').style.display  = 'block'
+        document.getElementById('meetLinkAnchor').href            = savedLink
+        document.getElementById('meetLinkAnchor').textContent     = savedLink
     }
 }
 
-function saveMeetLink() {
-    let link = document.getElementById('meetLink').value
+window.saveMeetLink = function() {
+    let link      = document.getElementById('meetLink').value
     let classroom = JSON.parse(localStorage.getItem('currentClassroom'))
 
     if (link === '') {
-        alert('Please paste a meeting link')
+        alert('Please paste a link')
         return
     }
 
     localStorage.setItem('meetLink_' + classroom.id, link)
-
     document.getElementById('meetLinkDisplay').style.display = 'block'
-    document.getElementById('meetLinkAnchor').href = link
-    document.getElementById('meetLinkAnchor').textContent = link
+    document.getElementById('meetLinkAnchor').href           = link
+    document.getElementById('meetLinkAnchor').textContent    = link
 }
 
-window.showCreateQuizModal = showCreateQuizModal
-window.hideCreateQuizModal = hideCreateQuizModal
-window.createQuiz = createQuiz
-window.attemptQuiz = attemptQuiz
-window.saveMeetLink = saveMeetLink
+// Trigger meet link load on page load if meeting tab might be active
+setTimeout(loadMeetLink, 100);

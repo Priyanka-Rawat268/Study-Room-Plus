@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MC-QZ — AI Quiz Generator for Engineers</title>
+  <meta name="description" content="Describe any engineering topic and instantly get an exam-ready MCQ quiz powered by Gemini AI." />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <span class="nav-logo">MC-QZ</span>
+    <div class="nav-dot"></div>
+  </nav>
+
+  <!-- LOADING OVERLAY -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner-lg"></div>
+    <p id="loadingText">Building your quiz…</p>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <div class="page-wrapper">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge">⚡ Powered by Gemini AI</div>
+      <h1>Just Describe<br />Your Quiz</h1>
+      <p>Tell the AI what you want — it figures out the subject, topic, and difficulty on its own.</p>
+    </section>
+
+    <!-- PROMPT CARD -->
+    <div class="card gen-card">
+      <form id="generateForm">
+
+        <!-- Single prompt box -->
+        <div class="form-group" style="margin-top:0">
+          <label for="promptInput">💬 What do you want to be quizzed on?</label>
+          <textarea
+            id="promptInput"
+            class="prompt-textarea"
+            rows="3"
+            placeholder="e.g.  Give me 15 hard questions on OS paging and segmentation
+e.g.  Binary search trees — interview level
+e.g.  Easy questions on Fourier transform for my exam tomorrow
+e.g.  Machine learning overfitting and regularization, mixed difficulty"
+            autocomplete="off"
+          ></textarea>
+          <p class="pill-hint" id="promptHint">Be as specific or casual as you like — the AI understands.</p>
+        </div>
+
+        <!-- Question count + timer row -->
+        <div class="gen-row gen-options-row">
+          <div class="form-group" style="margin-top:0">
+            <label>🔢 Questions — <span id="qCountDisplay">20</span></label>
+            <input type="range" id="questionCount" class="question-slider" min="5" max="50" value="20" step="5" />
+            <div class="slider-ticks">
+              <span>5</span><span>10</span><span>15</span><span>20</span><span>25</span><span>30</span><span>35</span><span>40</span><span>45</span><span>50</span>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:0">
+            <label for="timerMinutes">⏱️ Timer — <span id="timerDisplay">30</span> min <span class="auto-label" id="timerLabel">(auto)</span></label>
+            <input type="number" id="timerMinutes" min="1" max="180" value="30" />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="generateBtn">
+          <div class="spinner" id="btnSpinner"></div>
+          <span id="btnText">✨ Generate Quiz</span>
+        </button>
+
+      </form>
+    </div>
+
+    <!-- PAST QUIZZES -->
+    <div class="mt-32">
+      <p class="section-title">Recent Quizzes</p>
+      <div id="quizList" class="quiz-list">
+        <div class="empty-state">Loading history…</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='js/generate.js') }}"></script>
+</body>
+</html>

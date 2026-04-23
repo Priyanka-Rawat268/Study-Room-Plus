@@ -50,18 +50,77 @@
 
         <!-- QUIZ TAB -->
         <div class="tab-content" id="quizTab" style="display:none;">
-            <div class="tab-top">
-                <h3>Quizzes</h3>
-                <button class="btn" onclick="showCreateQuizModal()">+ Create Quiz</button>
+
+            <!-- AI GENERATOR SECTION -->
+            <div class="quiz-section-block">
+                <div class="quiz-section-header">
+                    <h3>✨ AI Quiz Generator</h3>
+                    <div class="backend-status" id="backendStatus">
+                        <span class="status-dot" id="statusDot"></span>
+                        <span id="statusText">Checking...</span>
+                    </div>
+                </div>
+                <p class="quiz-section-sub">Describe a topic and Gemini AI will generate an exam-ready quiz for you.</p>
+
+                <div class="ai-gen-card" id="aiGenCard">
+                    <form id="aiGenerateForm">
+                        <div class="ai-form-group">
+                            <label for="aiPromptInput">💬 What do you want to be quizzed on?</label>
+                            <textarea
+                                id="aiPromptInput"
+                                class="ai-prompt-textarea"
+                                rows="3"
+                                placeholder="e.g. 15 hard questions on OS paging and segmentation&#10;e.g. Binary search trees — interview level&#10;e.g. Easy questions on Fourier transform for my exam"
+                                autocomplete="off"
+                            ></textarea>
+                        </div>
+
+                        <div class="ai-options-row">
+                            <div class="ai-form-group">
+                                <label>🔢 Questions — <span id="aiQCountDisplay">20</span></label>
+                                <input type="range" id="aiQuestionCount" class="ai-slider" min="5" max="50" value="20" step="5" />
+                                <div class="ai-slider-ticks">
+                                    <span>5</span><span>10</span><span>15</span><span>20</span><span>25</span>
+                                    <span>30</span><span>35</span><span>40</span><span>45</span><span>50</span>
+                                </div>
+                            </div>
+                            <div class="ai-form-group">
+                                <label for="aiTimerMinutes">⏱️ Timer — <span id="aiTimerDisplay">30</span> min</label>
+                                <input type="number" id="aiTimerMinutes" min="1" max="180" value="30" />
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn ai-gen-btn" id="aiGenerateBtn">
+                            <span class="ai-spinner" id="aiSpinner"></span>
+                            <span id="aiGenerateBtnText">✨ Generate Quiz</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- AI Quiz History -->
+                <div class="ai-history-section">
+                    <p class="ai-history-title">📜 Recent AI Quizzes</p>
+                    <div id="aiQuizHistory" class="ai-quiz-list">
+                        <div class="ai-empty-state">Loading history…</div>
+                    </div>
+                </div>
             </div>
-            <div class="quiz-grid" id="quizGrid">
-                <p id="emptyQuiz">No quizzes yet. Create one!</p>
-            </div>
+
         </div>
 
         <!-- MEETING TAB -->
         <div class="tab-content" id="meetingTab" style="display:none;">
             <div class="meeting-box">
+                <h3>🔗 Meeting Link</h3>
+                <p>Paste a Google Meet or Zoom link to share with your class.</p>
+                <div class="meeting-input-row">
+                    <input type="url" id="meetLink" placeholder="https://meet.google.com/abc-defg-hij">
+                    <button class="btn" onclick="saveMeetLink()">Save</button>
+                </div>
+                <div id="meetLinkDisplay" style="display:none;">
+                    <p>Active meeting link:</p>
+                    <a id="meetLinkAnchor" href="#" target="_blank" rel="noopener"></a>
+                </div>
             </div>
         </div>
     </div>
@@ -80,29 +139,7 @@
         </div>
     </div>
 
-    <!-- CREATE QUIZ MODAL -->
-    <div class="modal" id="createQuizModal" style="display:none;">
-        <div class="modal-box">
-            <h3>Create Quiz</h3>
-            <input type="text" placeholder="Quiz Title" id="quizTitle">
-            <input type="text" placeholder="Question" id="quizQuestion">
-            <input type="text" placeholder="Option A" id="optionA">
-            <input type="text" placeholder="Option B" id="optionB">
-            <input type="text" placeholder="Option C" id="optionC">
-            <input type="text" placeholder="Option D" id="optionD">
-            <select id="correctAnswer">
-                <option value="">Select Correct Answer</option>
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="C">C</option>
-                <option value="D">D</option>
-            </select>
-            <div class="modal-buttons">
-                <button class="btn btn-outline" onclick="hideCreateQuizModal()">Cancel</button>
-                <button class="btn btn-outline" onclick="hideUploadModal()">Cancel</button>
-            </div>
-        </div>
-    </div>
+
 
     <script type="module" src="js/supabase.js"></script>
     <script type="module" src="js/classroom.js"></script>
