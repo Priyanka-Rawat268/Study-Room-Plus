@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MC-QZ — Results</title>
+  <meta name="description" content="See your quiz score and review each answer with explanations." />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="javascript:goBackToClassroom()" class="nav-logo" style="-webkit-text-fill-color:unset;background:none;color:var(--accent-light)" title="Back to classroom">← Classroom</a>
+  </nav>
+
+  <!-- Loading overlay for regen -->
+  <div class="loading-overlay" id="regenOverlay">
+    <div class="loading-spinner-lg"></div>
+    <p>Generating new quiz…</p>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="page-wrapper">
+
+    <!-- SCORE BANNER -->
+    <div class="score-banner" id="scoreBanner">
+      <div class="score-circle" id="scoreCircle">
+        <div class="score-inner">
+          <div class="score-pct" id="scorePct">0%</div>
+          <div class="score-label">Score</div>
+        </div>
+      </div>
+      <div class="score-grade" id="scoreGrade"></div>
+      <div class="score-stats">
+        <div class="stat-item">
+          <div class="stat-value correct" id="statCorrect">—</div>
+          <div class="stat-label">Correct</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value wrong" id="statWrong">—</div>
+          <div class="stat-label">Wrong</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="statTotal">—</div>
+          <div class="stat-label">Total</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="result-actions">
+      <button class="btn btn-secondary" onclick="goBackToClassroom()">🏫 Back to Classroom</button>
+      <button class="btn btn-secondary" id="retakeBtn">🔁 Retake</button>
+      <button class="btn btn-primary" id="regenBtn">✨ New Quiz Same Syllabus</button>
+    </div>
+
+    <!-- SYLLABUS OVERVIEW PANEL -->
+    <div class="overview-panel" id="overviewPanel" style="display:none">
+      <div class="overview-header">
+        <span class="section-title">📚 Syllabus Overview</span>
+        <button class="overview-toggle" id="overviewToggle">Hide ▲</button>
+      </div>
+      <div class="overview-body" id="overviewBody">
+
+        <div class="overview-subject" id="overviewSubject"></div>
+        <p class="overview-summary" id="overviewSummary"></p>
+
+        <div class="overview-grid">
+          <!-- Topics -->
+          <div class="overview-section">
+            <div class="section-title" style="margin-bottom:10px">Topics Covered</div>
+            <div class="tag-cloud" id="topicTags"></div>
+          </div>
+
+          <!-- Difficulty -->
+          <div class="overview-section">
+            <div class="section-title" style="margin-bottom:10px">Difficulty Profile</div>
+            <div id="difficultyBars"></div>
+          </div>
+        </div>
+
+        <!-- Topic linkages -->
+        <div class="overview-section mt-24" id="linkageSection" style="display:none">
+          <div class="section-title" style="margin-bottom:10px">Topic Linkages</div>
+          <div class="linkage-list" id="linkageList"></div>
+        </div>
+
+        <!-- Key concepts -->
+        <div class="overview-section mt-24">
+          <div class="section-title" style="margin-bottom:10px">Key Concepts</div>
+          <div class="tag-cloud" id="conceptTags"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ANSWER REVIEW -->
+    <div class="mt-32">
+      <p class="section-title">Answer Review</p>
+      <div id="reviewContainer"></div>
+    </div>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='js/result.js') }}"></script>
+  <script>
+    function goBackToClassroom() {
+      const params = new URLSearchParams(window.location.search);
+      const returnUrl = params.get('return');
+      if (returnUrl) {
+        window.location.href = returnUrl;
+      } else {
+        history.back();
+      }
+    }
+  </script>
+</body>
+</html>

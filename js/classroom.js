@@ -1,9 +1,19 @@
 import { supabase } from './supabase.js'
+import { isDemoUser } from './auth.js'
 
 // =====================
 // ON PAGE LOAD
 // =====================
 window.onload = async function () {
+
+    // ── Demo bypass ───────────────────────────────
+    if (isDemoUser()) {
+        loadClassroom()
+        restoreActiveTab()
+        return
+    }
+
+    // ── Real auth ─────────────────────────────────
     let { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
@@ -12,6 +22,7 @@ window.onload = async function () {
     }
 
     loadClassroom()
+    restoreActiveTab()
 }
 
 // =====================
@@ -24,16 +35,27 @@ function loadClassroom() {
         return
     }
 
-    document.getElementById('classroomTitle').textContent = classroom.name
+    document.getElementById('classroomTitle').textContent   = classroom.name
     document.getElementById('classroomSubject').textContent = classroom.subject + '  ·  Code: ' + classroom.code
+}
+
+// =====================
+// RESTORE TAB AFTER RETURNING FROM FLASK
+// =====================
+function restoreActiveTab() {
+    const tab = sessionStorage.getItem('restoreTab')
+    if (tab) {
+        sessionStorage.removeItem('restoreTab')
+        showTab(tab)
+    }
 }
 
 // =====================
 // TAB SWITCHING
 // =====================
 function showTab(tab) {
-    document.getElementById('notesTab').style.display = 'none'
-    document.getElementById('quizTab').style.display = 'none'
+    document.getElementById('notesTab').style.display   = 'none'
+    document.getElementById('quizTab').style.display    = 'none'
     document.getElementById('meetingTab').style.display = 'none'
 
     document.querySelectorAll('.classroom-tab').forEach(function (btn) {
@@ -60,11 +82,13 @@ function goBack() {
 }
 
 async function logout() {
-    await supabase.auth.signOut()
+    if (!isDemoUser()) {
+        await supabase.auth.signOut()
+    }
     localStorage.clear()
     window.location.href = 'index.html'
 }
 
 window.showTab = showTab
-window.goBack = goBack
-window.logout = logout
+window.goBack  = goBack
+window.logout  = logout

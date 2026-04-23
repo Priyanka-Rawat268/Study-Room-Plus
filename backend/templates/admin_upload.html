@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MC-QZ — Admin Upload</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="/" class="nav-logo" style="-webkit-text-fill-color:unset;background:none;color:var(--accent-light)">← MC-QZ</a>
+    <div class="nav-dot"></div>
+    <span style="font-size:0.75rem;color:var(--text-muted);margin-left:4px;">Admin · PDF Upload</span>
+  </nav>
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner-lg"></div>
+    <p id="loadingText">Analysing document…</p>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="page-wrapper">
+
+    <section class="hero">
+      <div class="hero-badge">🔒 Admin Mode</div>
+      <h1>PDF → Quiz</h1>
+      <p>Upload a PDF or text file to extract and generate an MCQ quiz. Not visible from main UI.</p>
+    </section>
+
+    <div class="card">
+      <form id="uploadForm">
+
+        <div class="upload-zone" id="dropZone">
+          <span class="upload-icon">📄</span>
+          <h3>Drop your file here</h3>
+          <p>Supports PDF and TXT files · Click or drag to upload</p>
+          <input type="file" id="fileInput" accept=".pdf,.txt" />
+        </div>
+
+        <div class="file-selected" id="fileSelected">
+          <span>📎</span>
+          <span id="fileName"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="timerMinutes">⏱ Quiz timer (minutes)</label>
+          <input type="number" id="timerMinutes" name="timer_minutes" min="1" max="180" value="30" />
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="generateBtn" disabled>
+          <div class="spinner" id="btnSpinner"></div>
+          <span id="btnText">📤 Upload & Generate</span>
+        </button>
+
+      </form>
+    </div>
+
+  </div>
+
+  <script>
+    const dropZone    = document.getElementById('dropZone');
+    const fileInput   = document.getElementById('fileInput');
+    const fileSelected = document.getElementById('fileSelected');
+    const fileNameEl  = document.getElementById('fileName');
+    const generateBtn = document.getElementById('generateBtn');
+    const btnText     = document.getElementById('btnText');
+    const btnSpinner  = document.getElementById('btnSpinner');
+    const overlay     = document.getElementById('loadingOverlay');
+    const toastEl     = document.getElementById('toast');
+
+    let selectedFile = null;
+
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault(); dropZone.classList.remove('drag-over');
+      if (e.dataTransfer.files[0]) handleFileSelect(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', () => { if (fileInput.files[0]) handleFileSelect(fileInput.files[0]); });
+
+    function handleFileSelect(file) {
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (!['pdf', 'txt'].includes(ext)) { showToast('Only PDF and TXT files are supported.', 'error'); return; }
+      selectedFile = file;
+      fileNameEl.textContent = file.name;
+      fileSelected.style.display = 'flex';
+      dropZone.querySelector('h3').textContent = 'File ready';
+      generateBtn.disabled = false;
+    }
+
+    document.getElementById('uploadForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      if (!selectedFile) return;
+      const timerMin = parseInt(document.getElementById('timerMinutes').value) || 30;
+      generateBtn.disabled = true;
+      btnSpinner.style.display = 'block';
+      overlay.classList.add('active');
+
+      const messages = ["Reading document...", "Parsing PDF structure...", "Analysing syllabus...", "Crafting questions...", "Almost there..."];
+      let msgIdx = 0;
+      const msgTimer = setInterval(() => {
+        btnText.textContent = messages[msgIdx % messages.length];
+        document.getElementById('loadingText').textContent = messages[msgIdx % messages.length];
+        msgIdx++;
+      }, 3500);
+
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      formData.append('timer_minutes', timerMin);
+
+      try {
+        const res  = await fetch('/api/upload', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Upload failed');
+        clearInterval(msgTimer);
+        window.location.href = `/quiz?id=${data.quiz_id}`;
+      } catch (err) {
+        clearInterval(msgTimer);
+        overlay.classList.remove('active');
+        generateBtn.disabled = false;
+        btnText.textContent = '📤 Upload & Generate';
+        btnSpinner.style.display = 'none';
+        showToast(err.message, 'error');
+      }
+    });
+
+    function showToast(msg, type = '') {
+      toastEl.textContent = msg;
+      toastEl.className = `toast ${type}`;
+      toastEl.classList.add('show');
+      setTimeout(() => toastEl.classList.remove('show'), 3500);
+    }
+  </script>
+</body>
+</html>

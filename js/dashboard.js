@@ -1,10 +1,20 @@
 import { supabase } from './supabase.js'
+import { isDemoUser, getDemoUser } from './auth.js'
 
 // =====================
 // ON PAGE LOAD
 // =====================
 window.onload = async function () {
-    // check if user is logged in
+
+    // ── Demo bypass ───────────────────────────────
+    if (isDemoUser()) {
+        const demo = getDemoUser()
+        document.getElementById('welcomeText').textContent = 'Hi, ' + demo.name + '! (Demo)'
+        renderClassrooms(JSON.parse(localStorage.getItem('demoClassrooms') || '[]'))
+        return
+    }
+
+    // ── Real auth ─────────────────────────────────
     let { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
@@ -12,11 +22,9 @@ window.onload = async function () {
         return
     }
 
-    // show welcome message
     let name = user.user_metadata.full_name || user.email
     document.getElementById('welcomeText').textContent = 'Hi, ' + name + '!'
 
-    // load classrooms
     loadClassrooms()
 }
 
@@ -65,23 +73,41 @@ function generateCode() {
 // =====================
 async function createClassroom() {
     let subject = document.getElementById('subjectName').value
-    let name = document.getElementById('classroomName').value
+    let name    = document.getElementById('classroomName').value
 
     if (subject === '' || name === '') {
         alert('Please fill in all fields')
         return
     }
 
-    // get current user
+    // ── Demo mode: save to localStorage ──────────
+    if (isDemoUser()) {
+        const demoClassrooms = JSON.parse(localStorage.getItem('demoClassrooms') || '[]')
+        const newClass = {
+            id:         'demo-class-' + Date.now(),
+            name:       name,
+            subject:    subject,
+            code:       generateCode(),
+            created_by: getDemoUser().id
+        }
+        demoClassrooms.unshift(newClass)
+        localStorage.setItem('demoClassrooms', JSON.stringify(demoClassrooms))
+        hideModals()
+        document.getElementById('subjectName').value  = ''
+        document.getElementById('classroomName').value = ''
+        renderClassrooms(demoClassrooms)
+        return
+    }
+
+    // ── Real Supabase ─────────────────────────────
     let { data: { user } } = await supabase.auth.getUser()
 
-    // save to Supabase
     let { data, error } = await supabase
         .from('classrooms')
         .insert([{
-            name: name,
-            subject: subject,
-            code: generateCode(),
+            name:       name,
+            subject:    subject,
+            code:       generateCode(),
             created_by: user.id
         }])
         .select()
@@ -91,19 +117,13 @@ async function createClassroom() {
         return
     }
 
-    // also add creator as a member
     await supabase
         .from('classroom_members')
-        .insert([{
-            classroom_id: data[0].id,
-            user_id: user.id
-        }])
+        .insert([{ classroom_id: data[0].id, user_id: user.id }])
 
     hideModals()
-
-    document.getElementById('subjectName').value = ''
+    document.getElementById('subjectName').value  = ''
     document.getElementById('classroomName').value = ''
-
     loadClassrooms()
 }
 
@@ -118,7 +138,12 @@ async function joinClassroom() {
         return
     }
 
-    // find classroom with this code
+    if (isDemoUser()) {
+        alert('Demo users cannot join real classrooms. Create one instead!')
+        hideModals()
+        return
+    }
+
     let { data: classrooms, error } = await supabase
         .from('classrooms')
         .select('*')
@@ -130,11 +155,8 @@ async function joinClassroom() {
     }
 
     let classroom = classrooms[0]
-
-    // get current user
     let { data: { user } } = await supabase.auth.getUser()
 
-    // check if already a member
     let { data: existing } = await supabase
         .from('classroom_members')
         .select('*')
@@ -142,13 +164,9 @@ async function joinClassroom() {
         .eq('user_id', user.id)
 
     if (existing.length === 0) {
-        // add as member
         await supabase
             .from('classroom_members')
-            .insert([{
-                classroom_id: classroom.id,
-                user_id: user.id
-            }])
+            .insert([{ classroom_id: classroom.id, user_id: user.id }])
     }
 
     hideModals()
@@ -159,7 +177,7 @@ async function joinClassroom() {
 // RENDER CLASSROOMS
 // =====================
 function renderClassrooms(classrooms) {
-    let grid = document.getElementById('classroomGrid')
+    let grid     = document.getElementById('classroomGrid')
     let emptyMsg = document.getElementById('emptyMsg')
 
     if (!classrooms || classrooms.length === 0) {
@@ -196,7 +214,9 @@ function renderClassrooms(classrooms) {
 // LOGOUT
 // =====================
 async function logout() {
-    await supabase.auth.signOut()
+    if (!isDemoUser()) {
+        await supabase.auth.signOut()
+    }
     localStorage.clear()
     window.location.href = 'index.html'
 }
@@ -204,9 +224,9 @@ async function logout() {
 // =====================
 // EXPOSE FUNCTIONS TO HTML
 // =====================
-window.showCreateModal = showCreateModal
-window.showJoinModal = showJoinModal
-window.hideModals = hideModals
-window.createClassroom = createClassroom
-window.joinClassroom = joinClassroom
-window.logout = logout
+window.showCreateModal  = showCreateModal
+window.showJoinModal    = showJoinModal
+window.hideModals       = hideModals
+window.createClassroom  = createClassroom
+window.joinClassroom    = joinClassroom
+window.logout           = logout
