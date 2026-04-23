@@ -2,6 +2,16 @@ import { supabase } from './supabase.js'
 import { isDemoUser, getDemoUser } from './auth.js'
 
 // =====================
+// GLOBAL EXPOSURE
+// =====================
+window.showCreateModal  = showCreateModal
+window.showJoinModal    = showJoinModal
+window.hideModals       = hideModals
+window.createClassroom  = createClassroom
+window.joinClassroom    = joinClassroom
+window.logout           = logout
+
+// =====================
 // ON PAGE LOAD
 // =====================
 window.onload = async function () {
@@ -221,12 +231,4 @@ async function logout() {
     window.location.href = 'index.html'
 }
 
-// =====================
-// EXPOSE FUNCTIONS TO HTML
-// =====================
-window.showCreateModal  = showCreateModal
-window.showJoinModal    = showJoinModal
-window.hideModals       = hideModals
-window.createClassroom  = createClassroom
-window.joinClassroom    = joinClassroom
-window.logout           = logout
+// End of file

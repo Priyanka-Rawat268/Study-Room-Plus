@@ -1,0 +1,37 @@
+# Recursive ignore for all node_modules
+node_modules/
+**/node_modules/
+
+# Node.js Debug/Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+package-lock.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv
+env/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Flask Specific
+backend/uploads/*
+backend/__pycache__/
+!backend/uploads/.gitkeep
+
+# System Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Built Assets (to prevent large binary blobs in git)
+meeting-server/public/mediasoup-client.js
