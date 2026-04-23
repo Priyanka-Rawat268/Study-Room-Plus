@@ -9,6 +9,22 @@
     <link rel="stylesheet" href="css/classroom.css">
     <link rel="stylesheet" href="css/notes.css">
     <link rel="stylesheet" href="css/quiz.css">
+    <link rel="stylesheet" href="css/meeting.css">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+    <!-- TAB LOGIC — plain script so onclick works without module scope issues -->
+    <script>
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.querySelectorAll('.classroom-tab').forEach(b => b.classList.remove('active'));
+            const target = document.getElementById(tab + 'Tab');
+            if (target) target.style.display = 'block';
+            const btns = document.querySelectorAll('.classroom-tab');
+            if (tab === 'notes')   btns[0].classList.add('active');
+            if (tab === 'quiz')    btns[1].classList.add('active');
+            if (tab === 'meeting') btns[2].classList.add('active');
+        }
+    </script>
 </head>
 
 <body>
@@ -17,42 +33,44 @@
     <nav class="navbar">
         <h1 class="logo">📚 StudyRoom+</h1>
         <div class="nav-right">
-            <button class="btn-small" onclick="goBack()">← Back</button>
-            <button class="btn-small" onclick="logout()">Logout</button>
+            <button class="btn-small" onclick="window.goBack()">← Back</button>
+            <button class="btn-small" onclick="window.logout()">Logout</button>
         </div>
     </nav>
 
     <!-- CLASSROOM HEADER -->
     <div class="classroom-header">
-        <h2 id="classroomTitle">Classroom</h2>
-        <p id="classroomSubject">Subject</p>
-        <span class="room-code" id="classroomCode">Code:---</span>
+        <div class="classroom-header-icon">🎓</div>
+        <div class="classroom-header-info">
+            <h2 id="classroomTitle">Classroom</h2>
+            <p id="classroomSubject">Subject</p>
+        </div>
     </div>
 
-    <!-- TABS -->
     <div class="container">
+
+        <!-- TABS NAV -->
         <div class="classroom-tabs">
             <button class="classroom-tab active" onclick="showTab('notes')">📝 Notes</button>
             <button class="classroom-tab" onclick="showTab('quiz')">🧠 Quiz</button>
             <button class="classroom-tab" onclick="showTab('meeting')">🔗 Meeting</button>
         </div>
 
-        <!-- NOTES TAB -->
+        <!-- ══════════ NOTES TAB ══════════ -->
         <div class="tab-content" id="notesTab">
             <div class="tab-top">
                 <h3>Shared Notes</h3>
-                <button class="btn" onclick="showUploadModal()">+ Upload Note</button>
+                <button class="btn" onclick="window.showUploadModal()">+ Upload Note</button>
             </div>
             <div class="notes-grid" id="notesGrid">
                 <p id="emptyNotes">No notes yet. Upload one!</p>
             </div>
         </div>
 
-        <!-- QUIZ TAB -->
+        <!-- ══════════ QUIZ TAB ══════════ -->
         <div class="tab-content" id="quizTab" style="display:none;">
 
-            <!-- AI GENERATOR SECTION -->
-            <div class="quiz-section-block">
+            <div class="ai-gen-card" id="aiGenCard">
                 <div class="quiz-section-header">
                     <h3>✨ AI Quiz Generator</h3>
                     <div class="backend-status" id="backendStatus">
@@ -60,91 +78,114 @@
                         <span id="statusText">Checking...</span>
                     </div>
                 </div>
-                <p class="quiz-section-sub">Describe a topic and Gemini AI will generate an exam-ready quiz for you.</p>
+                <p class="quiz-section-sub">Generate premium quizzes instantly from any topic using Gemini AI.</p>
 
-                <div class="ai-gen-card" id="aiGenCard">
-                    <form id="aiGenerateForm">
+                <form id="aiGenerateForm">
+                    <div class="ai-form-group">
+                        <textarea id="aiPromptInput" class="ai-prompt-textarea" rows="3"
+                            placeholder="Describe what you want to be quizzed on…&#10;e.g. Thermodynamics laws, World War II, Python OOP"></textarea>
+                    </div>
+
+                    <div class="ai-options-row">
                         <div class="ai-form-group">
-                            <label for="aiPromptInput">💬 What do you want to be quizzed on?</label>
-                            <textarea
-                                id="aiPromptInput"
-                                class="ai-prompt-textarea"
-                                rows="3"
-                                placeholder="e.g. 15 hard questions on OS paging and segmentation&#10;e.g. Binary search trees — interview level&#10;e.g. Easy questions on Fourier transform for my exam"
-                                autocomplete="off"
-                            ></textarea>
+                            <label>Questions: <strong id="aiQCountDisplay">20</strong></label>
+                            <input type="range" id="aiQuestionCount" class="ai-slider" min="5" max="50" value="20">
+                            <div class="ai-slider-ticks"><span>5</span><span>50</span></div>
                         </div>
-
-                        <div class="ai-options-row">
-                            <div class="ai-form-group">
-                                <label>🔢 Questions — <span id="aiQCountDisplay">20</span></label>
-                                <input type="range" id="aiQuestionCount" class="ai-slider" min="5" max="50" value="20" step="5" />
-                                <div class="ai-slider-ticks">
-                                    <span>5</span><span>10</span><span>15</span><span>20</span><span>25</span>
-                                    <span>30</span><span>35</span><span>40</span><span>45</span><span>50</span>
-                                </div>
-                            </div>
-                            <div class="ai-form-group">
-                                <label for="aiTimerMinutes">⏱️ Timer — <span id="aiTimerDisplay">30</span> min</label>
-                                <input type="number" id="aiTimerMinutes" min="1" max="180" value="30" />
-                            </div>
+                        <div class="ai-form-group">
+                            <label>Timer (min): <strong id="aiTimerDisplay">30</strong></label>
+                            <input type="number" id="aiTimerMinutes" min="5" max="180" value="30">
                         </div>
+                    </div>
 
-                        <button type="submit" class="btn ai-gen-btn" id="aiGenerateBtn">
-                            <span class="ai-spinner" id="aiSpinner"></span>
-                            <span id="aiGenerateBtnText">✨ Generate Quiz</span>
-                        </button>
-                    </form>
+                    <button type="submit" id="aiGenerateBtn" class="ai-gen-btn">
+                        <span id="aiGenerateBtnText">✨ Generate Quiz</span>
+                        <span id="aiSpinner" class="ai-spinner" style="display:none;"></span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="ai-history-section">
+                <h3 class="ai-history-title">📜 AI Quiz History</h3>
+                <div id="aiQuizHistory" class="ai-quiz-list">
+                    <div class="ai-empty-state">Loading history…</div>
                 </div>
+            </div>
+        </div>
 
-                <!-- AI Quiz History -->
-                <div class="ai-history-section">
-                    <p class="ai-history-title">📜 Recent AI Quizzes</p>
-                    <div id="aiQuizHistory" class="ai-quiz-list">
-                        <div class="ai-empty-state">Loading history…</div>
+        <!-- ══════════ MEETING TAB ══════════ -->
+        <div class="tab-content" id="meetingTab" style="display:none;">
+            <div class="meeting-container">
+
+                <!-- Video Stage -->
+                <div class="meeting-main-stage">
+                    <div class="join-overlay" id="joinOverlay">
+                        <h2>Ready to teach?</h2>
+                        <p>Starting a live class opens the video stream for this room.</p>
+                        <button class="btn-start-large" id="joinMeetingBtn">🚀 Start Live Class</button>
+                    </div>
+
+                    <div class="video-grid" id="videoGrid">
+                        <div class="video-wrapper local" id="localVideoWrapper" style="display:none;">
+                            <video id="localVideo" autoplay muted playsinline></video>
+                            <div class="video-label">Instructor (You)</div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Controls -->
+                    <div class="meeting-controls-bar" id="controlsBar" style="display:none;">
+                        <button class="ctrl-btn" id="toggleCam" title="Toggle Camera">📷</button>
+                        <button class="ctrl-btn" id="toggleMic" title="Toggle Mic">🎤</button>
+                        <button class="ctrl-btn leave" id="leaveMeetingBtn" title="Leave">🔚</button>
                     </div>
                 </div>
-            </div>
 
+                <!-- Sidebar -->
+                <div class="meeting-sidebar">
+                    <div class="sidebar-card">
+                        <h4>Classroom Info</h4>
+                        <p id="meetingStatusText">Session not started</p>
+                    </div>
+                    <div class="sidebar-card">
+                        <h4>Meeting Link</h4>
+                        <p>Save a fallback link for external apps:</p>
+                        <div class="link-box">
+                            <input type="url" id="meetLink" placeholder="https://meet.google.com/...">
+                            <button class="btn-small" onclick="window.saveMeetLink()">Save</button>
+                        </div>
+                        <div id="meetLinkDisplay" style="margin-top:10px; display:none;">
+                            <a id="meetLinkAnchor" href="#" target="_blank" rel="noopener"
+                                style="font-size:0.75rem; color:#7c3aed; word-break:break-all;"></a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
-        <!-- MEETING TAB -->
-        <div class="tab-content" id="meetingTab" style="display:none;">
-            <div class="meeting-box">
-                <h3>🔗 Meeting Link</h3>
-                <p>Paste a Google Meet or Zoom link to share with your class.</p>
-                <div class="meeting-input-row">
-                    <input type="url" id="meetLink" placeholder="https://meet.google.com/abc-defg-hij">
-                    <button class="btn" onclick="saveMeetLink()">Save</button>
-                </div>
-                <div id="meetLinkDisplay" style="display:none;">
-                    <p>Active meeting link:</p>
-                    <a id="meetLinkAnchor" href="#" target="_blank" rel="noopener"></a>
-                </div>
+    </div><!-- /.container -->
+
+    <!-- ══════════ UPLOAD MODAL ══════════ -->
+    <div id="uploadModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>Upload Shared Note</h3>
+            <input type="text"  id="noteTitle" placeholder="Note title" style="margin-bottom:10px;">
+            <textarea id="noteDesc" rows="2" placeholder="Short description (optional)" style="margin-bottom:10px;"></textarea>
+            <input type="file"  id="noteFile" style="margin-bottom:20px;">
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="window.hideUploadModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="window.uploadNote()">Upload</button>
             </div>
         </div>
     </div>
 
-    <!-- UPLOAD NOTE MODAL -->
-    <div class="modal" id="uploadModal" style="display:none;">
-        <div class="modal-box">
-            <h3>Upload Note</h3>
-            <input type="text" placeholder="Note Title" id="noteTitle">
-            <input type="text" placeholder="Description (optional)" id="noteDesc">
-            <input type="file" id="noteFile" accept=".pdf,.doc,.docx,.txt,.png,.jpg">
-            <div class="modal-buttons">
-                <button class="btn" onclick="uploadNote()">Upload</button>
-                <button class="btn btn-outline" onclick="hideAllModals()">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-
-
-    <script type="module" src="js/supabase.js"></script>
+    <!-- Scripts — modules last -->
+    <script type="module" src="js/auth.js"></script>
     <script type="module" src="js/classroom.js"></script>
     <script type="module" src="js/notes.js"></script>
     <script type="module" src="js/quiz.js"></script>
-</body>
+    <script src="http://localhost:3001/mediasoup-client.js"></script>
+    <script type="module" src="js/meeting.js"></script>
 
+</body>
 </html>

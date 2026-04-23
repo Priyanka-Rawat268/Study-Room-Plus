@@ -1,6 +1,17 @@
 import { supabase } from './supabase.js'
 
 // =====================
+// GLOBAL EXPOSURE — Move to top for instant availability
+// =====================
+window.showLogin    = showLogin;
+window.showSignup   = showSignup;
+window.login        = login;
+window.signup       = signup;
+window.loginAsDemo  = loginAsDemo;
+window.logout       = logout;
+window.goBack       = goBack;
+
+// =====================
 // DEMO USER HELPERS
 // =====================
 const DEMO_USER = {
@@ -18,12 +29,10 @@ export function getDemoUser() {
     return DEMO_USER
 }
 
-// Demo login — bypasses Supabase entirely
 function loginAsDemo() {
     localStorage.setItem('demoUser', 'true')
     localStorage.setItem('currentUser', DEMO_USER.email)
     localStorage.setItem('currentUserName', DEMO_USER.name)
-    // Seed a demo classroom so the dashboard isn't empty
     const demoClassroom = {
         id:         'demo-class-001',
         name:       'Demo Classroom',
@@ -52,11 +61,8 @@ function showSignup() {
     document.querySelectorAll('.tab')[0].classList.remove('active')
 }
 
-window.showLogin  = showLogin
-window.showSignup = showSignup
-
 // =====================
-// LOGIN
+// AUTH LOGIC
 // =====================
 async function login() {
     let email    = document.getElementById('loginEmail').value
@@ -80,13 +86,9 @@ async function login() {
     localStorage.removeItem('demoUser')
     localStorage.setItem('currentUser', data.user.email)
     localStorage.setItem('currentUserName', data.user.user_metadata.full_name || data.user.email)
-
     window.location.href = 'dashboard.html'
 }
 
-// =====================
-// SIGNUP
-// =====================
 async function signup() {
     let name     = document.getElementById('signupName').value
     let email    = document.getElementById('signupEmail').value
@@ -111,6 +113,12 @@ async function signup() {
     alert('Account created! Please check your email to confirm your account, then login.')
 }
 
-window.login        = login
-window.signup       = signup
-window.loginAsDemo  = loginAsDemo
+async function logout() {
+    await supabase.auth.signOut();
+    localStorage.clear();
+    window.location.href = 'index.html';
+}
+
+function goBack() {
+    window.history.back();
+}
