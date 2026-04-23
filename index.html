@@ -1,42 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudySync</title>
-    <link rel="stylesheet" href="style.css">
+    <title>StudyRoom+</title>
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/global.css">
 </head>
+
 <body>
+    <div class="auth-wrapper">
+        <div class="auth-container">
 
-    <div class="auth-container">
-        
-        <!-- LOGO -->
-        <h1 class="logo">📚 StudySync</h1>
-        <p class="tagline">Learn together, grow together</p>
+            <!-- LOGO -->
+            <h1 class="logo">📚 StudyRoom+</h1>
+            <p class="tagline">Learn together, grow together</p>
 
-        <!-- TABS -->
-        <div class="tabs">
-            <button class="tab active" onclick="showLogin()">Login</button>
-            <button class="tab" onclick="showSignup()">Sign Up</button>
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab active" onclick="showLogin()">Login</button>
+                <button class="tab" onclick="showSignup()">Sign Up</button>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <div class="form" id="loginForm">
+                <input type="email" placeholder="Email" id="loginEmail">
+                <input type="password" placeholder="Password" id="loginPassword">
+                <button class="btn" onclick="login()">Login</button>
+            </div>
+
+            <!-- SIGNUP FORM -->
+            <div class="form" id="signupForm" style="display:none;">
+                <input type="text" placeholder="Full Name" id="signupName">
+                <input type="email" placeholder="Email" id="signupEmail">
+                <input type="password" placeholder="Password" id="signupPassword">
+                <button class="btn" onclick="signup()">Sign Up</button>
+            </div>
+
         </div>
 
-        <!-- LOGIN FORM -->
-        <div class="form" id="loginForm">
-            <input type="email" placeholder="Email" id="loginEmail">
-            <input type="password" placeholder="Password" id="loginPassword">
-            <button class="btn" onclick="login()">Login</button>
-        </div>
-
-        <!-- SIGNUP FORM -->
-        <div class="form" id="signupForm" style="display:none;">
-            <input type="text" placeholder="Full Name" id="signupName">
-            <input type="email" placeholder="Email" id="signupEmail">
-            <input type="password" placeholder="Password" id="signupPassword">
-            <button class="btn" onclick="signup()">Sign Up</button>
-        </div>
-
-    </div>
-
-    <script src="main.js"></script>
+        <script type="module" src="js/supabase.js"></script>
+        <script type="module" src="js/auth.js"></script>
 </body>
+
 </html>

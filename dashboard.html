@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudySync - Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <title>StudyRoom+ - Dashboard</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/dashboard.css">
 </head>
+
 <body>
 
     <!-- NAVBAR -->
     <nav class="navbar">
-        <h1 class="logo">📚 StudySync</h1>
+        <h1 class="logo">📚 StudyRoom+</h1>
         <div class="nav-right">
             <span id="welcomeText">Welcome!</span>
             <button class="btn-small" onclick="logout()">Logout</button>
@@ -62,6 +65,8 @@
         </div>
     </div>
 
-    <script src="main.js"></script>
+    <script type="module" src="js/supabase.js"></script>
+    <script type="module" src="js/dashboard.js"></script>
 </body>
+
 </html>

@@ -4,15 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudySync - Classroom</title>
-    <link rel="stylesheet" href="style.css">
+    <title>StudyRoom+ - Classroom</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/classroom.css">
+    <link rel="stylesheet" href="css/notes.css">
+    <link rel="stylesheet" href="css/quiz.css">
 </head>
 
 <body>
 
     <!-- NAVBAR -->
     <nav class="navbar">
-        <h1 class="logo">📚 StudySync</h1>
+        <h1 class="logo">📚 StudyRoom+</h1>
         <div class="nav-right">
             <button class="btn-small" onclick="goBack()">← Back</button>
             <button class="btn-small" onclick="logout()">Logout</button>
@@ -23,7 +26,7 @@
     <div class="classroom-header">
         <h2 id="classroomTitle">Classroom</h2>
         <p id="classroomSubject">Subject</p>
-        <span class="room-code" id="classroomCode">Code: ------</span>
+        <span class="room-code" id="classroomCode">Code:---</span>
     </div>
 
     <!-- TABS -->
@@ -95,13 +98,16 @@
                 <option value="D">D</option>
             </select>
             <div class="modal-buttons">
-                <button class="btn" onclick="createQuiz()">Create</button>
-                <button class="btn btn-outline" onclick="hideAllModals()">Cancel</button>
+                <button class="btn btn-outline" onclick="hideCreateQuizModal()">Cancel</button>
+                <button class="btn btn-outline" onclick="hideUploadModal()">Cancel</button>
             </div>
         </div>
     </div>
 
-    <script src="main.js"></script>
+    <script type="module" src="js/supabase.js"></script>
+    <script type="module" src="js/classroom.js"></script>
+    <script type="module" src="js/notes.js"></script>
+    <script type="module" src="js/quiz.js"></script>
 </body>
 
 </html>

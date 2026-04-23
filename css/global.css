@@ -1,0 +1,181 @@
+/* =====================
+   RESET & BASE
+===================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background-color: #0f0f13;
+    color: #e2e2f0;
+    min-height: 100vh;
+}
+
+/* =====================
+   NAVBAR
+===================== */
+.navbar {
+    background: #1a1a2e;
+    padding: 14px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #2e2e4a;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: 700;
+    color: #a78bfa;
+    letter-spacing: -0.5px;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-right span {
+    font-size: 13px;
+    color: #6b6b9a;
+}
+
+/* =====================
+   BUTTONS
+===================== */
+.btn {
+    padding: 9px 20px;
+    background: #7c3aed;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.btn:hover {
+    background: #6d28d9;
+}
+
+.btn-outline {
+    background: transparent;
+    color: #a78bfa;
+    border: 1px solid #3d3d6b;
+}
+
+.btn-outline:hover {
+    background: rgba(124, 58, 237, 0.1);
+}
+
+.btn-small {
+    padding: 7px 16px;
+    background: transparent;
+    color: #a78bfa;
+    border: 1px solid #3d3d6b;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-small:hover {
+    background: rgba(124, 58, 237, 0.1);
+}
+
+/* =====================
+   MODAL
+===================== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}
+
+.modal-box {
+    background: #1a1a2e;
+    padding: 32px;
+    border-radius: 20px;
+    border: 1px solid #2e2e4a;
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.modal-box h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #e2e2f0;
+}
+
+.modal-box input,
+.modal-box select {
+    padding: 12px 16px;
+    background: #0f0f13;
+    border: 1px solid #2e2e4a;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #e2e2f0;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.modal-box input:focus,
+.modal-box select:focus {
+    border-color: #7c3aed;
+}
+
+.modal-box input::placeholder {
+    color: #4a4a6a;
+}
+
+.modal-box select option {
+    background: #1a1a2e;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.modal-buttons .btn {
+    flex: 1;
+}
+
+/* =====================
+   CONTAINER
+===================== */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px;
+}
+
+/* =====================
+   ROOM CODE BADGE
+===================== */
+.room-code {
+    font-size: 11px;
+    background: rgba(124, 58, 237, 0.15);
+    color: #a78bfa;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(124, 58, 237, 0.3);
+}

@@ -1,0 +1,83 @@
+/* =====================
+   CLASSROOM HEADER
+===================== */
+.classroom-header {
+    background: #1a1a2e;
+    border-bottom: 1px solid #2e2e4a;
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.classroom-header-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: rgba(124, 58, 237, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    border: 1px solid rgba(124, 58, 237, 0.3);
+    flex-shrink: 0;
+}
+
+.classroom-header-info h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #e2e2f0;
+    margin-bottom: 4px;
+}
+
+.classroom-header-info p {
+    font-size: 13px;
+    color: #6b6b9a;
+}
+
+/* =====================
+   CLASSROOM TABS
+===================== */
+.classroom-tabs {
+    display: flex;
+    gap: 4px;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 5px;
+    border: 1px solid #2e2e4a;
+    width: fit-content;
+    margin-bottom: 28px;
+}
+
+.classroom-tab {
+    padding: 9px 22px;
+    border: none;
+    background: transparent;
+    color: #6b6b9a;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 9px;
+    transition: all 0.2s;
+}
+
+.classroom-tab.active {
+    background: #7c3aed;
+    color: white;
+    font-weight: 500;
+}
+
+/* =====================
+   TAB TOP ROW
+===================== */
+.tab-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.tab-top h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #e2e2f0;
+}
