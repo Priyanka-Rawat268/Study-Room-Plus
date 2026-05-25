@@ -21,10 +21,6 @@ window.onload = async function () {
         return
     }
 
-<<<<<<< HEAD
-    
-=======
->>>>>>> d4359a22354594d7d063afe07b44d0c9f553af42
     let name = user.user_metadata.full_name || user.email
     document.getElementById('welcomeText').textContent = 'Hi, ' + name + '!'
 
@@ -115,10 +111,6 @@ async function createClassroom() {
         return
     }
 
-<<<<<<< HEAD
-  
-=======
->>>>>>> d4359a22354594d7d063afe07b44d0c9f553af42
     await supabase
         .from('classroom_members')
         .insert([{ classroom_id: data[0].id, user_id: user.id }])

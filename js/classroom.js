@@ -39,9 +39,6 @@ function loadClassroom() {
     document.getElementById('classroomSubject').textContent = classroom.subject + '  ·  Code: ' + classroom.code
 }
 
-<<<<<<< HEAD
-
-=======
 // =====================
 // RESTORE TAB AFTER RETURNING FROM FLASK
 // =====================
@@ -54,7 +51,6 @@ function restoreActiveTab() {
 }
 
 // =====================
->>>>>>> d4359a22354594d7d063afe07b44d0c9f553af42
 // TAB SWITCHING
 
 function showTab(tab) {
