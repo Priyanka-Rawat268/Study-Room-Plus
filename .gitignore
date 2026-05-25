@@ -22,10 +22,18 @@ build/
 dist/
 *.egg-info/
 
-# Flask Specific
+# Flask / Backend Data
 backend/uploads/*
-backend/__pycache__/
 !backend/uploads/.gitkeep
+backend/quizzes/*
+!backend/quizzes/.gitkeep
+backend/results/*
+!backend/results/.gitkeep
+backend/overviews/*
+!backend/overviews/.gitkeep
+backend/__pycache__/
+backend/.env
+backend/quota_tracker.json
 
 # System Files
 .DS_Store
