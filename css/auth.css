@@ -91,3 +91,39 @@
 .form input::placeholder {
     color: #4a4a6a;
 }
+
+/* =====================
+   DEMO DIVIDER
+===================== */
+.demo-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #4a4a6a;
+    font-size: 12px;
+}
+
+.demo-divider::before,
+.demo-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #2e2e4a;
+}
+
+/* =====================
+   DEMO BUTTON
+===================== */
+.btn-demo {
+    background: transparent;
+    border: 1px dashed #4a4a6a;
+    color: #a0a0c0;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+.btn-demo:hover {
+    border-color: #a78bfa;
+    color: #a78bfa;
+    background: rgba(124, 58, 237, 0.08);
+}

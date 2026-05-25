@@ -1,0 +1,33 @@
+{
+    "models/gemini-2.5-flash": {
+        "date": "2026-04-22",
+        "rpd": 4,
+        "rpm_timestamps": [
+            1776873588.7130349,
+            1776873619.6239917
+        ]
+    },
+    "models/gemini-flash-latest": {
+        "date": "2026-04-23",
+        "rpd": 6,
+        "rpm_timestamps": [
+            1776920810.1596775
+        ]
+    },
+    "models/gemini-2.0-flash": {
+        "date": "2026-04-22",
+        "rpd": 3,
+        "rpm_timestamps": [
+            1776873599.154149,
+            1776873653.4750245
+        ]
+    },
+    "models/gemini-2.5-pro": {
+        "date": "2026-04-22",
+        "rpd": 3,
+        "rpm_timestamps": [
+            1776873609.350225,
+            1776873664.1712117
+        ]
+    }
+}

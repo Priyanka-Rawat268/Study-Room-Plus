@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MC-QZ — Quiz</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+</head>
+<body class="quiz-body-layout">
+
+  <!-- Header -->
+  <header class="quiz-header-bar">
+    <div class="header-left">
+      <a href="javascript:goBackToClassroom()" class="nav-logo" style="-webkit-text-fill-color:unset;background:none;color:var(--accent-light);font-size:1.1rem" title="Back to classroom">← Classroom</a>
+      <span class="quiz-divider">|</span>
+      <h2 id="viewQuizTitle">Loading...</h2>
+    </div>
+    
+    <div class="header-right">
+      <div class="timer-card">
+        <span id="timerDisplay">00:00</span>
+      </div>
+      <button class="btn btn-secondary btn-sm" id="endQuizBtn">🏁 End Quiz</button>
+    </div>
+  </header>
+
+  <div class="quiz-main-layout">
+    
+    <!-- LEFT: SIDEBAR PALETTE -->
+    <aside class="quiz-sidebar" id="quizSidebar">
+      <div class="sidebar-header">
+        <span class="section-title">Question Palette</span>
+      </div>
+      <div class="palette-grid" id="paletteGrid">
+        <!-- Buttons injected here -->
+      </div>
+      
+      <div class="palette-legend">
+        <div class="legend-item"><span class="box current"></span> Current</div>
+        <div class="legend-item"><span class="box answered"></span> Answered</div>
+        <div class="legend-item"><span class="box skipped"></span> Skipped</div>
+        <div class="legend-item"><span class="box default"></span> Not Visited</div>
+      </div>
+
+      <div class="marking-info-card">
+        <p class="section-title">Marking Scheme</p>
+        <div class="marking-row">
+          <span>Correct:</span> <span class="val success" id="valCorrect">+0.0</span>
+        </div>
+        <div class="marking-row">
+          <span>Wrong:</span> <span class="val error" id="valWrong">-0.0</span>
+        </div>
+        <button class="btn-text" id="editSchemeBtn">⚙️ Edit Scheme</button>
+      </div>
+    </aside>
+
+    <!-- RIGHT: QUESTION AREA -->
+    <main class="question-workspace">
+      
+      <!-- Section Directions (Collapsible) -->
+      <div class="directions-panel" id="directionsPanel" style="display:none">
+        <button class="directions-toggle" id="directionsToggle">
+          <span id="sectionTitleDisplay">Section Title</span>
+          <span class="toggle-icon">▼</span>
+        </button>
+        <div class="directions-content" id="directionsContent">
+          <!-- Text here -->
+        </div>
+      </div>
+
+      <div class="question-display" id="questionDisplay">
+        <!-- Single Question Card -->
+        <div class="question-loading">
+          <div class="loading-spinner-lg"></div>
+          <p>Preparing your workspace...</p>
+        </div>
+      </div>
+
+      <!-- Navigation Footer -->
+      <footer class="quiz-nav-footer">
+        <div class="nav-left">
+          <button class="btn btn-secondary" id="prevBtn" disabled>← Previous</button>
+        </div>
+        <div class="nav-center">
+          <button class="btn btn-secondary" id="resetBtn">❌ Reset Choice</button>
+        </div>
+        <div class="nav-right">
+          <button class="btn btn-primary" id="nextBtn">Next →</button>
+          <button class="btn btn-success" id="finalSubmitBtn" style="display:none">Submit Quiz</button>
+        </div>
+      </footer>
+    </main>
+
+  </div>
+
+  <!-- EDIT SCHEME MODAL -->
+  <div class="modal-backdrop" id="schemeModal" style="display:none">
+    <div class="modal-card">
+      <h3 class="modal-title">Edit Marking Scheme</h3>
+      <div class="form-group" style="text-align:left">
+        <label>Correct Answer Marks</label>
+        <input type="number" id="inputCorrect" step="0.1" value="1.0">
+      </div>
+      <div class="form-group" style="text-align:left">
+        <label>Wrong Answer Penalty (negative)</label>
+        <input type="number" id="inputWrong" step="0.1" value="-0.33">
+      </div>
+      <div class="modal-actions" style="margin-top:24px">
+        <button class="btn btn-secondary" id="closeSchemeBtn">Cancel</button>
+        <button class="btn btn-primary" id="saveSchemeBtn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- END CONFIRM MODAL -->
+  <div class="modal-backdrop" id="endQuizModal" style="display:none">
+    <div class="modal-card">
+      <div class="modal-icon">🏁</div>
+      <h3 class="modal-title">End Quiz Early?</h3>
+      <p class="modal-body" id="endQuizModalBody">Summary of answers...</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="modalCancelBtn">Continue</button>
+        <button class="btn btn-primary" id="modalConfirmBtn">Finish & Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="{{ url_for('static', filename='js/quiz.js') }}"></script>
+  <script>
+    function goBackToClassroom() {
+      const params = new URLSearchParams(window.location.search);
+      const returnUrl = params.get('return');
+      if (returnUrl) {
+        // Since we are moving between origins (5000 -> 3000), 
+        // we set the restoreTab flag in the return URL's domain's storage
+        // But we can't touch 3000's storage from 5000.
+        // So we just navigate back and Study Plus will handle it if it was already set.
+        window.location.href = returnUrl;
+      } else {
+        history.back();
+      }
+    }
+  </script>
+</body>
+</html>

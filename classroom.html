@@ -117,4 +117,153 @@
 <script type="module" src="js/notes.js"></script>
 <script type="module" src="js/quiz.js"></script>
 </body>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyRoom+ - Classroom</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/classroom.css">
+    <link rel="stylesheet" href="css/notes.css">
+    <link rel="stylesheet" href="css/quiz.css">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <h1 class="logo">📚 StudyRoom+</h1>
+        <div class="nav-right">
+            <button class="btn-small" onclick="goBack()">← Back</button>
+            <button class="btn-small" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- CLASSROOM HEADER -->
+    <div class="classroom-header">
+        <h2 id="classroomTitle">Classroom</h2>
+        <p id="classroomSubject">Subject</p>
+        <span class="room-code" id="classroomCode">Code:---</span>
+    </div>
+
+    <!-- TABS -->
+    <div class="container">
+        <div class="classroom-tabs">
+            <button class="classroom-tab active" onclick="showTab('notes')">📝 Notes</button>
+            <button class="classroom-tab" onclick="showTab('quiz')">🧠 Quiz</button>
+            <button class="classroom-tab" onclick="showTab('meeting')">🔗 Meeting</button>
+        </div>
+
+        <!-- NOTES TAB -->
+        <div class="tab-content" id="notesTab">
+            <div class="tab-top">
+                <h3>Shared Notes</h3>
+                <button class="btn" onclick="showUploadModal()">+ Upload Note</button>
+            </div>
+            <div class="notes-grid" id="notesGrid">
+                <p id="emptyNotes">No notes yet. Upload one!</p>
+            </div>
+        </div>
+
+        <!-- QUIZ TAB -->
+        <div class="tab-content" id="quizTab" style="display:none;">
+
+            <!-- AI GENERATOR SECTION -->
+            <div class="quiz-section-block">
+                <div class="quiz-section-header">
+                    <h3>✨ AI Quiz Generator</h3>
+                    <div class="backend-status" id="backendStatus">
+                        <span class="status-dot" id="statusDot"></span>
+                        <span id="statusText">Checking...</span>
+                    </div>
+                </div>
+                <p class="quiz-section-sub">Describe a topic and Gemini AI will generate an exam-ready quiz for you.</p>
+
+                <div class="ai-gen-card" id="aiGenCard">
+                    <form id="aiGenerateForm">
+                        <div class="ai-form-group">
+                            <label for="aiPromptInput">💬 What do you want to be quizzed on?</label>
+                            <textarea
+                                id="aiPromptInput"
+                                class="ai-prompt-textarea"
+                                rows="3"
+                                placeholder="e.g. 15 hard questions on OS paging and segmentation&#10;e.g. Binary search trees — interview level&#10;e.g. Easy questions on Fourier transform for my exam"
+                                autocomplete="off"
+                            ></textarea>
+                        </div>
+
+                        <div class="ai-options-row">
+                            <div class="ai-form-group">
+                                <label>🔢 Questions — <span id="aiQCountDisplay">20</span></label>
+                                <input type="range" id="aiQuestionCount" class="ai-slider" min="5" max="50" value="20" step="5" />
+                                <div class="ai-slider-ticks">
+                                    <span>5</span><span>10</span><span>15</span><span>20</span><span>25</span>
+                                    <span>30</span><span>35</span><span>40</span><span>45</span><span>50</span>
+                                </div>
+                            </div>
+                            <div class="ai-form-group">
+                                <label for="aiTimerMinutes">⏱️ Timer — <span id="aiTimerDisplay">30</span> min</label>
+                                <input type="number" id="aiTimerMinutes" min="1" max="180" value="30" />
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn ai-gen-btn" id="aiGenerateBtn">
+                            <span class="ai-spinner" id="aiSpinner"></span>
+                            <span id="aiGenerateBtnText">✨ Generate Quiz</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- AI Quiz History -->
+                <div class="ai-history-section">
+                    <p class="ai-history-title">📜 Recent AI Quizzes</p>
+                    <div id="aiQuizHistory" class="ai-quiz-list">
+                        <div class="ai-empty-state">Loading history…</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- MEETING TAB -->
+        <div class="tab-content" id="meetingTab" style="display:none;">
+            <div class="meeting-box">
+                <h3>🔗 Meeting Link</h3>
+                <p>Paste a Google Meet or Zoom link to share with your class.</p>
+                <div class="meeting-input-row">
+                    <input type="url" id="meetLink" placeholder="https://meet.google.com/abc-defg-hij">
+                    <button class="btn" onclick="saveMeetLink()">Save</button>
+                </div>
+                <div id="meetLinkDisplay" style="display:none;">
+                    <p>Active meeting link:</p>
+                    <a id="meetLinkAnchor" href="#" target="_blank" rel="noopener"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPLOAD NOTE MODAL -->
+    <div class="modal" id="uploadModal" style="display:none;">
+        <div class="modal-box">
+            <h3>Upload Note</h3>
+            <input type="text" placeholder="Note Title" id="noteTitle">
+            <input type="text" placeholder="Description (optional)" id="noteDesc">
+            <input type="file" id="noteFile" accept=".pdf,.doc,.docx,.txt,.png,.jpg">
+            <div class="modal-buttons">
+                <button class="btn" onclick="uploadNote()">Upload</button>
+                <button class="btn btn-outline" onclick="hideAllModals()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script type="module" src="js/supabase.js"></script>
+    <script type="module" src="js/classroom.js"></script>
+    <script type="module" src="js/notes.js"></script>
+    <script type="module" src="js/quiz.js"></script>
+</body>
+
 </html>
