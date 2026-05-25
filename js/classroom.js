@@ -1,8 +1,8 @@
 import { supabase } from './supabase.js'
 
-// =====================
+
 // ON PAGE LOAD
-// =====================
+
 window.onload = async function () {
     let { data: { user } } = await supabase.auth.getUser()
 
@@ -14,9 +14,9 @@ window.onload = async function () {
     loadClassroom()
 }
 
-// =====================
+
 // LOAD CLASSROOM DETAILS
-// =====================
+
 function loadClassroom() {
     let classroom = JSON.parse(localStorage.getItem('currentClassroom'))
     if (!classroom) {
@@ -28,9 +28,9 @@ function loadClassroom() {
     document.getElementById('classroomSubject').textContent = classroom.subject + '  ·  Code: ' + classroom.code
 }
 
-// =====================
+
 // TAB SWITCHING
-// =====================
+
 function showTab(tab) {
     document.getElementById('notesTab').style.display = 'none'
     document.getElementById('quizTab').style.display = 'none'
@@ -52,9 +52,9 @@ function showTab(tab) {
     }
 }
 
-// =====================
+
 // NAVIGATION
-// =====================
+
 function goBack() {
     window.location.href = 'dashboard.html'
 }

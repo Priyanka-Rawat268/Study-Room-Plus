@@ -1,8 +1,7 @@
 import { supabase } from './supabase.js'
 
-// =====================
 // ON PAGE LOAD
-// =====================
+
 window.onload = async function () {
     // check if user is logged in
     let { data: { user } } = await supabase.auth.getUser()
@@ -12,17 +11,14 @@ window.onload = async function () {
         return
     }
 
-    // show welcome message
+    
     let name = user.user_metadata.full_name || user.email
     document.getElementById('welcomeText').textContent = 'Hi, ' + name + '!'
 
-    // load classrooms
     loadClassrooms()
 }
 
-// =====================
 // LOAD CLASSROOMS
-// =====================
 async function loadClassrooms() {
     let { data: classrooms, error } = await supabase
         .from('classrooms')
@@ -37,9 +33,7 @@ async function loadClassrooms() {
     renderClassrooms(classrooms)
 }
 
-// =====================
 // MODALS
-// =====================
 function showCreateModal() {
     document.getElementById('createModal').style.display = 'flex'
 }
@@ -53,16 +47,15 @@ function hideModals() {
     document.getElementById('joinModal').style.display = 'none'
 }
 
-// =====================
+
 // GENERATE ROOM CODE
-// =====================
 function generateCode() {
     return Math.random().toString(36).substring(2, 8).toUpperCase()
 }
 
-// =====================
+
 // CREATE CLASSROOM
-// =====================
+
 async function createClassroom() {
     let subject = document.getElementById('subjectName').value
     let name = document.getElementById('classroomName').value
@@ -91,7 +84,7 @@ async function createClassroom() {
         return
     }
 
-    // also add creator as a member
+  
     await supabase
         .from('classroom_members')
         .insert([{
@@ -107,9 +100,7 @@ async function createClassroom() {
     loadClassrooms()
 }
 
-// =====================
 // JOIN CLASSROOM
-// =====================
 async function joinClassroom() {
     let code = document.getElementById('roomCode').value.toUpperCase()
 

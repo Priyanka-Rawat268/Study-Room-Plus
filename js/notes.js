@@ -1,6 +1,6 @@
 import { supabase } from './supabase.js'
 
-// =====================
+
 // ON PAGE LOAD
 // =====================
 window.addEventListener('load', function () {

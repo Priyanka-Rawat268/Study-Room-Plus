@@ -83,7 +83,7 @@
             <input type="file" id="noteFile" accept=".pdf,.doc,.docx,.txt,.png,.jpg">
             <div class="modal-buttons">
                 <button class="btn" onclick="uploadNote()">Upload</button>
-                <button class="btn btn-outline" onclick="hideAllModals()">Cancel</button>
+                <button class="btn btn-outline" onclick="hideUploadModal()">Cancel</button>
             </div>
         </div>
     </div>
@@ -106,8 +106,8 @@
                 <option value="D">D</option>
             </select>
             <div class="modal-buttons">
+                <button class="btn btn-outline" onclick="createQuiz()">Submit</button>
                 <button class="btn btn-outline" onclick="hideCreateQuizModal()">Cancel</button>
-                <button class="btn btn-outline" onclick="hideUploadModal()">Cancel</button>
             </div>
         </div>
     </div>

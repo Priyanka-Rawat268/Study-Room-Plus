@@ -1,6 +1,6 @@
-/* =====================
+/*
    AUTH WRAPPER
-===================== */
+*/
 .auth-wrapper {
     display: flex;
     justify-content: center;
@@ -9,9 +9,9 @@
     padding: 24px;
 }
 
-/* =====================
+/* 
    AUTH BOX
-===================== */
+ */
 .auth-container {
     background: #1a1a2e;
     padding: 40px;
@@ -35,9 +35,9 @@
     margin-bottom: 28px;
 }
 
-/* =====================
+/*
    TABS
-===================== */
+ */
 .tabs {
     display: flex;
     background: #0f0f13;
@@ -64,9 +64,9 @@
     font-weight: 500;
 }
 
-/* =====================
+/*
    FORM
-===================== */
+ */
 .form {
     display: flex;
     flex-direction: column;
