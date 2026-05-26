@@ -213,12 +213,4 @@ async function logout() {
     window.location.href = 'index.html'
 }
 
-// =====================
-// EXPOSE FUNCTIONS TO HTML
-// =====================
-window.showCreateModal  = showCreateModal
-window.showJoinModal    = showJoinModal
-window.hideModals       = hideModals
-window.createClassroom  = createClassroom
-window.joinClassroom    = joinClassroom
-window.logout           = logout
+// End of file

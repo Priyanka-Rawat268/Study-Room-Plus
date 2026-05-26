@@ -54,16 +54,27 @@ function initAIGenerator() {
 
     if (!form) return
 
+    let userEditedTimer = false;
+    const timerLabel  = document.getElementById('aiTimerLabel');
+
     // Slider updates
     slider.addEventListener('input', (e) => {
-        qDisplay.textContent = e.target.value
+        const val = parseInt(e.target.value);
+        qDisplay.textContent = val;
         // Auto-update timer recommendation (1.5 min per question)
-        timerInput.value = Math.round(e.target.value * 1.5)
-        timerDisp.textContent = timerInput.value
+        if (!userEditedTimer) {
+            timerInput.value = Math.round(val * 1.5)
+            timerDisp.textContent = timerInput.value
+        }
+        // Update slider gradient fill
+        const pct = ((val - 5) / (50 - 5)) * 100;
+        slider.style.background = `linear-gradient(90deg, #7c3aed ${pct}%, #1a1a2e ${pct}%)`;
     })
 
     timerInput.addEventListener('input', (e) => {
+        userEditedTimer = true;
         timerDisp.textContent = e.target.value
+        if (timerLabel) timerLabel.textContent = '(custom)';
     })
 
     const loadingMessages = [
@@ -88,16 +99,17 @@ function initAIGenerator() {
             return
         }
 
-        const btn     = document.getElementById('aiGenerateBtn')
-        const btnText = document.getElementById('aiGenerateBtnText')
-        const spinner = document.getElementById('aiSpinner')
+        const btn          = document.getElementById('aiGenerateBtn')
+        const loadingState = document.getElementById('aiLoadingState')
+        const loadingText  = document.getElementById('aiLoadingText')
 
-        btn.disabled          = true
-        spinner.style.display = 'inline-block'
+        btn.style.display = 'none';
+        loadingState.style.display = 'flex';
+        loadingText.textContent = loadingMessages[0];
 
-        let msgIdx = 0
+        let msgIdx = 1
         const msgTimer = setInterval(() => {
-            btnText.textContent = loadingMessages[msgIdx % loadingMessages.length]
+            loadingText.textContent = loadingMessages[msgIdx % loadingMessages.length]
             msgIdx++
         }, 3000)
 
@@ -120,9 +132,8 @@ function initAIGenerator() {
             clearInterval(msgTimer)
             alert('AI Quiz Error: ' + err.message + '\n\nMake sure the Flask backend is running:\n  cd backend && python app.py')
         } finally {
-            btn.disabled          = false
-            btnText.textContent   = '✨ Generate Quiz'
-            spinner.style.display = 'none'
+            btn.style.display = 'flex';
+            loadingState.style.display = 'none';
         }
     })
 }

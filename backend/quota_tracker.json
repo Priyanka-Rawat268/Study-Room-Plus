@@ -8,10 +8,10 @@
         ]
     },
     "models/gemini-flash-latest": {
-        "date": "2026-04-23",
-        "rpd": 6,
+        "date": "2026-05-26",
+        "rpd": 3,
         "rpm_timestamps": [
-            1776920810.1596775
+            1779735073.7046282
         ]
     },
     "models/gemini-2.0-flash": {

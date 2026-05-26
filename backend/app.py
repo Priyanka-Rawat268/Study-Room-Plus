@@ -118,8 +118,12 @@ def generate_topic():
         })
 
     try:
+        import time
+        start_time = time.time()
         print(f"[app] Generating topic quiz: prompt={user_prompt!r}, n={num_questions}")
         gen_data = generate_mcqs_from_topic(user_prompt, num_questions)
+        end_time = time.time()
+        print(f"[app] Total backend processing time (including API & parsing): {end_time - start_time:.2f}s")
 
         ai_title       = gen_data.pop('quiz_title', user_prompt[:80])
         marking_scheme = _clean_ms(gen_data.get('marking_scheme') or {})

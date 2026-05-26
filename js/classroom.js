@@ -5,17 +5,16 @@ import { isDemoUser } from './auth.js'
 // ON PAGE LOAD
 
 window.onload = async function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasRoomId = urlParams.has('roomId');
 
-    // ── Demo bypass ───────────────────────────────
-    if (isDemoUser()) {
+    if (isDemoUser() || hasRoomId) {
         loadClassroom()
         restoreActiveTab()
         return
     }
 
-    // ── Real auth ─────────────────────────────────
     let { data: { user } } = await supabase.auth.getUser()
-
     if (!user) {
         window.location.href = 'index.html'
         return
@@ -29,7 +28,17 @@ window.onload = async function () {
 // LOAD CLASSROOM DETAILS
 
 function loadClassroom() {
-    let classroom = JSON.parse(localStorage.getItem('currentClassroom'))
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlRoomId = urlParams.get('roomId');
+
+    let classroom = JSON.parse(localStorage.getItem('currentClassroom'));
+    
+    // If no classroom in storage but joined via link, create a temporary context
+    if (!classroom && urlRoomId) {
+        classroom = { id: urlRoomId, name: 'Live Session', subject: 'Guest Access', code: 'N/A' };
+        localStorage.setItem('currentClassroom', JSON.stringify(classroom));
+    }
+
     if (!classroom) {
         window.location.href = 'dashboard.html'
         return
@@ -39,10 +48,13 @@ function loadClassroom() {
     document.getElementById('classroomSubject').textContent = classroom.subject + '  ·  Code: ' + classroom.code
 }
 
-// =====================
-// RESTORE TAB AFTER RETURNING FROM FLASK
-// =====================
 function restoreActiveTab() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('roomId')) {
+        showTab('meeting');
+        return;
+    }
+
     const tab = sessionStorage.getItem('restoreTab')
     if (tab) {
         sessionStorage.removeItem('restoreTab')
@@ -88,7 +100,3 @@ async function logout() {
     localStorage.clear()
     window.location.href = 'index.html'
 }
-
-window.showTab = showTab
-window.goBack  = goBack
-window.logout  = logout

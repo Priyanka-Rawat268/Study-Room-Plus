@@ -11,12 +11,11 @@
 
 <body>
 
-    <!-- NAVBAR -->
     <nav class="navbar">
         <h1 class="logo">📚 StudyRoom+</h1>
         <div class="nav-right">
             <span id="welcomeText">Welcome!</span>
-            <button class="btn-small" onclick="logout()">Logout</button>
+            <button class="btn-small" onclick="window.logout()">Logout</button>
         </div>
     </nav>
 
@@ -27,8 +26,8 @@
         <div class="top-row">
             <h2>My Classrooms</h2>
             <div class="top-buttons">
-                <button class="btn" onclick="showCreateModal()">+ Create Classroom</button>
-                <button class="btn btn-outline" onclick="showJoinModal()">Join Classroom</button>
+                <button class="btn" onclick="window.showCreateModal()">+ Create Classroom</button>
+                <button class="btn btn-outline" onclick="window.showJoinModal()">Join Classroom</button>
             </div>
         </div>
 
@@ -47,8 +46,8 @@
             <input type="text" placeholder="Subject Name" id="subjectName">
             <input type="text" placeholder="Classroom Name" id="classroomName">
             <div class="modal-buttons">
-                <button class="btn" onclick="createClassroom()">Create</button>
-                <button class="btn btn-outline" onclick="hideModals()">Cancel</button>
+                <button class="btn" onclick="window.createClassroom()">Create</button>
+                <button class="btn btn-outline" onclick="window.hideModals()">Cancel</button>
             </div>
         </div>
     </div>
@@ -59,8 +58,8 @@
             <h3>Join Classroom</h3>
             <input type="text" placeholder="Enter Room Code" id="roomCode">
             <div class="modal-buttons">
-                <button class="btn" onclick="joinClassroom()">Join</button>
-                <button class="btn btn-outline" onclick="hideModals()">Cancel</button>
+                <button class="btn" onclick="window.joinClassroom()">Join</button>
+                <button class="btn btn-outline" onclick="window.hideModals()">Cancel</button>
             </div>
         </div>
     </div>

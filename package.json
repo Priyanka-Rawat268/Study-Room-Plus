@@ -1,0 +1,15 @@
+{
+  "name": "study-room-plus",
+  "version": "1.0.0",
+  "description": "A high-performance classroom platform with AI quizzes and Mediasoup meetings.",
+  "private": true,
+  "scripts": {
+    "start:backend": "cd backend && python app.py",
+    "start:meeting": "cd meeting-server && npm start",
+    "install:all": "npm install && cd meeting-server && npm install && cd ../backend && pip install -r requirements.txt"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "socket.io-client": "^4.7.2"
+  }
+}

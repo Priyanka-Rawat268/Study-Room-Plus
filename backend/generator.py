@@ -383,12 +383,15 @@ def generate_questions_with_backoff(prompt_chunk: str, system: str, max_retries:
             system_instruction=system,
             generation_config={
                 "response_mime_type": "application/json",
-                "max_output_tokens": 8192,
+                "max_output_tokens": 16384,
             }
         )
         try:
             quota_tracker.record_request(active_model)
+            t_start = time.time()
             response = model.generate_content(prompt_chunk)
+            t_end = time.time()
+            print(f"[generator] Gemini API ({active_model}) network response time: {t_end - t_start:.2f}s")
             return response.text.strip()
         except google_exceptions.ResourceExhausted:
             is_last = attempt == (max_retries * total_models) - 1
@@ -438,36 +441,76 @@ def _clean_json(raw: str) -> str:
 
 def _repair_json(raw: str) -> str:
     """
-    Attempt to recover truncated JSON by closing open arrays/objects.
-    Strategy: find the last complete top-level item boundary and close cleanly.
+    Attempt to recover truncated JSON using a stack-based approach.
+    Works for both flat arrays and deeply nested {sections:[{questions:[...]}]} structures.
     """
-    # Try clean parse first
     try:
         json.loads(raw)
         return raw
     except json.JSONDecodeError:
         pass
 
-    # Walk backwards from end to find last full '}' or ']' that closes a complete item
-    # For truncated arrays of objects: remove the incomplete trailing item, then close
-    is_array = raw.lstrip().startswith('[')
-    close_ch = ']' if is_array else '}'
+    # Walk the string tracking open brackets/braces and string state.
+    # We find the last position where all open structures were cleanly closed,
+    # then trim to that point and append the closing tokens in reverse order.
+    stack = []
+    in_string = False
+    escape_next = False
+    last_clean_pos = 0  # position after the last fully closed top-level item
 
-    # Find last clean closing brace for an object element inside array
-    last_good = raw.rfind('}')
-    if last_good != -1:
-        trimmed = raw[:last_good + 1]
-        if is_array:
-            # Strip any trailing comma then close the array
-            trimmed = trimmed.rstrip().rstrip(',')
-            trimmed += ']'
-            # Wrap in sections structure if needed
-        try:
-            json.loads(trimmed)
-            print(f"[generator] Repaired truncated JSON: recovered {len(trimmed)} chars")
-            return trimmed
-        except json.JSONDecodeError:
-            pass
+    for i, ch in enumerate(raw):
+        if escape_next:
+            escape_next = False
+            continue
+        if ch == '\\' and in_string:
+            escape_next = True
+            continue
+        if ch == '"':
+            in_string = not in_string
+            continue
+        if in_string:
+            continue
+        if ch in ('{', '['):
+            stack.append(ch)
+        elif ch == '}':
+            if stack and stack[-1] == '{':
+                stack.pop()
+                if not stack:          # back to top level
+                    last_clean_pos = i + 1
+        elif ch == ']':
+            if stack and stack[-1] == '[':
+                stack.pop()
+                if not stack:
+                    last_clean_pos = i + 1
+
+    if not stack:
+        # JSON was actually complete — parse error must be something else
+        return raw
+
+    # Trim to last clean boundary and close all open structures
+    trimmed = raw[:last_clean_pos].rstrip().rstrip(',')
+
+    # Close any remaining open structures in reverse order
+    closing = ''.join(']' if ch == '[' else '}' for ch in reversed(stack))
+    repaired = trimmed + closing
+
+    try:
+        json.loads(repaired)
+        print(f"[generator] Repaired truncated JSON — kept {last_clean_pos} chars, closed {len(stack)} open bracket(s)")
+        return repaired
+    except json.JSONDecodeError:
+        pass
+
+    # Last resort: strip to last full top-level '}' or ']'
+    for close in ('}', ']'):
+        pos = raw.rfind(close)
+        if pos != -1:
+            candidate = raw[:pos + 1]
+            try:
+                json.loads(candidate)
+                return candidate
+            except json.JSONDecodeError:
+                continue
 
     return raw
 

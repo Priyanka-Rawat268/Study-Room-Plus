@@ -217,6 +217,41 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* =====================
+   AI LOADING STATE
+===================== */
+.ai-loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 14px;
+    background: rgba(124, 58, 237, 0.1);
+    border: 1px solid rgba(124, 58, 237, 0.3);
+    border-radius: 12px;
+}
+
+.ai-spinner-large {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(167, 139, 250, 0.3);
+    border-top-color: #a78bfa;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.ai-loading-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #c4b5fd;
+    animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* =====================
    AI HISTORY SECTION
 ===================== */
 .ai-history-section {
