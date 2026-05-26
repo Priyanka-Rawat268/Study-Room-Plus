@@ -1,19 +1,8 @@
 import { supabase } from './supabase.js'
 import { isDemoUser, getDemoUser } from './auth.js'
 
-// =====================
-// GLOBAL EXPOSURE
-// =====================
-window.showCreateModal  = showCreateModal
-window.showJoinModal    = showJoinModal
-window.hideModals       = hideModals
-window.createClassroom  = createClassroom
-window.joinClassroom    = joinClassroom
-window.logout           = logout
-
-// =====================
 // ON PAGE LOAD
-// =====================
+
 window.onload = async function () {
 
     // ── Demo bypass ───────────────────────────────
@@ -38,9 +27,7 @@ window.onload = async function () {
     loadClassrooms()
 }
 
-// =====================
 // LOAD CLASSROOMS
-// =====================
 async function loadClassrooms() {
     let { data: classrooms, error } = await supabase
         .from('classrooms')
@@ -55,9 +42,7 @@ async function loadClassrooms() {
     renderClassrooms(classrooms)
 }
 
-// =====================
 // MODALS
-// =====================
 function showCreateModal() {
     document.getElementById('createModal').style.display = 'flex'
 }
@@ -71,16 +56,15 @@ function hideModals() {
     document.getElementById('joinModal').style.display = 'none'
 }
 
-// =====================
+
 // GENERATE ROOM CODE
-// =====================
 function generateCode() {
     return Math.random().toString(36).substring(2, 8).toUpperCase()
 }
 
-// =====================
+
 // CREATE CLASSROOM
-// =====================
+
 async function createClassroom() {
     let subject = document.getElementById('subjectName').value
     let name    = document.getElementById('classroomName').value
@@ -137,9 +121,7 @@ async function createClassroom() {
     loadClassrooms()
 }
 
-// =====================
 // JOIN CLASSROOM
-// =====================
 async function joinClassroom() {
     let code = document.getElementById('roomCode').value.toUpperCase()
 

@@ -1,6 +1,6 @@
 import { supabase } from './supabase.js'
 
-// =====================
+
 // ON PAGE LOAD
 // =====================
 window.addEventListener('load', function () {
@@ -18,6 +18,11 @@ function hideUploadModal() {
     document.getElementById('uploadModal').style.display = 'none'
 }
 
+// hide model
+function hideAllModals() {
+    document.getElementById('uploadModal').style.display = 'none'
+    document.getElementById('createQuizModal').style.display = 'none'
+}
 // =====================
 // UPLOAD NOTE
 // =====================
@@ -122,3 +127,4 @@ async function renderNotes() {
 window.showUploadModal = showUploadModal
 window.hideUploadModal = hideUploadModal
 window.uploadNote = uploadNote
+window.hideAllModals = hideAllModals

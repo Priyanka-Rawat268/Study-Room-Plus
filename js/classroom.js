@@ -1,16 +1,9 @@
 import { supabase } from './supabase.js'
 import { isDemoUser } from './auth.js'
 
-// =====================
-// GLOBAL EXPOSE (Do this first!)
-// =====================
-window.showTab = showTab;
-window.goBack = goBack;
-window.logout = logout;
 
-// =====================
 // ON PAGE LOAD
-// =====================
+
 window.onload = async function () {
     const urlParams = new URLSearchParams(window.location.search);
     const hasRoomId = urlParams.has('roomId');
@@ -30,6 +23,9 @@ window.onload = async function () {
     loadClassroom()
     restoreActiveTab()
 }
+
+
+// LOAD CLASSROOM DETAILS
 
 function loadClassroom() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -66,6 +62,9 @@ function restoreActiveTab() {
     }
 }
 
+// =====================
+// TAB SWITCHING
+
 function showTab(tab) {
     document.getElementById('notesTab').style.display   = 'none'
     document.getElementById('quizTab').style.display    = 'none'
@@ -86,6 +85,9 @@ function showTab(tab) {
         document.querySelectorAll('.classroom-tab')[2].classList.add('active')
     }
 }
+
+
+// NAVIGATION
 
 function goBack() {
     window.location.href = 'dashboard.html'
